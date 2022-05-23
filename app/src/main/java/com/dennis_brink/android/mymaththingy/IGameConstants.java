@@ -30,4 +30,7 @@ public interface IGameConstants {
     String EXT_SECOND = "nd";
     String EXT_THIRD = "rd";
     String EXT_REST = "th";
+
+    String LAYOUT_CONFIRM_DELETE = "confirm_delete";
+    String LAYOUT_CONFIRM_EXIT = "confirm_exit";
 }
