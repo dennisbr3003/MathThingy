@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/holo_blue_light"
+    android:visibility="visible"
+    tools:layout_editor_absoluteX="113dp"
+    tools:layout_editor_absoluteY="9dp">
+
+    <ImageView
+        android:id="@+id/imgHighScoreOk"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/txtHighScoreErrorMessage"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/etxtHighScoreName"
+        app:srcCompat="@drawable/check"
+        tools:ignore="ImageContrastCheck" />
+
+    <TextView
+        android:id="@+id/txtHighScoreErrorMessage"
+        android:layout_width="0dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="8dp"
+        android:text="(You must enter a valid name)"
+        android:textColor="@color/win8_red"
+        android:textStyle="bold"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imgOwl"
+        app:layout_constraintTop_toBottomOf="@+id/etxtHighScoreName" />
+
+    <EditText
+        android:id="@+id/etxtHighScoreName"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="2dp"
+        android:layout_marginTop="1dp"
+        android:layout_marginEnd="2dp"
+        android:backgroundTint="@color/WhiteSmoke"
+        android:ems="10"
+        android:hint="Type your name here..."
+        android:inputType="textPersonName"
+        android:minHeight="48dp"
+        android:textAlignment="textStart"
+        android:textColor="@color/WhiteSmoke"
+        android:textColorHint="@color/WhiteSmoke"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toStartOf="@+id/imgHighScoreOk"
+        app:layout_constraintStart_toEndOf="@+id/imgOwl"
+        app:layout_constraintTop_toBottomOf="@+id/txtHighScoreMessage" />
+
+    <TextView
+        android:id="@+id/txtHighScoreMessage"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="13dp"
+        android:text="message"
+        android:textAlignment="center"
+        android:textColor="@color/WhiteSmoke"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imgOwl"
+        app:layout_constraintTop_toBottomOf="@+id/imgTextBalloon" />
+
+    <ImageView
+        android:id="@+id/imgOwl"
+        android:layout_width="79dp"
+        android:layout_height="68dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="80dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/owl" />
+
+    <ImageView
+        android:id="@+id/imgTextBalloon"
+        android:layout_width="210dp"
+        android:layout_height="89dp"
+        android:layout_marginStart="80dp"
+        android:layout_marginTop="4dp"
+        android:cropToPadding="false"
+        android:scaleType="fitXY"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/speech_bubble" />
+
+    <ImageView
+        android:id="@+id/imgCongratulations"
+        android:layout_width="200dp"
+        android:layout_height="78dp"
+        android:layout_marginStart="96dp"
+        android:layout_marginTop="4dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/congratulations" />
+</androidx.constraintlayout.widget.ConstraintLayout>
