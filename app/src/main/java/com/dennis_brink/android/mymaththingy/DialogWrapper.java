@@ -44,7 +44,7 @@ public class DialogWrapper implements IGameConstants {
 
         String text = String.format("Are you sure you want to       the high score list?"); // mind the gap, it's there for a reason
         try {
-            return createDeleteConfirm(text, context);
+            return createConfirmationDialog(context, LAYOUT_CONFIRM_DELETE, text);
         } catch (Exception e){
             Log.d("DENNIS_B", "DialogWrapper.class: (getDeleteConfirmDialog) --> " + e.getMessage());
         }
@@ -55,7 +55,7 @@ public class DialogWrapper implements IGameConstants {
 
         String text = String.format("Are you sure you want to leave now, you will lose momentum!");
         try {
-            return createExitConfirm(text, context);
+            return createConfirmationDialog(context, LAYOUT_CONFIRM_EXIT, text);
         } catch (Exception e){
             Log.d("DENNIS_B", "DialogWrapper.class: (getExitConfirmDialog) --> " + e.getMessage());
         }
@@ -172,58 +172,23 @@ public class DialogWrapper implements IGameConstants {
 
     }
 
-    private static AlertDialog createDeleteConfirm(String text, Context context){
+    private static AlertDialog createConfirmationDialog(Context context, String dlg_type, String text){
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-
+        View dialogMessage = null;
         builder.setCancelable(false);
         LayoutInflater inf = LayoutInflater.from(context);
-        View dialogMessage = inf.inflate(R.layout.dialog_delete_highscore, null);
 
-        builder.setView(dialogMessage);
-
-        TextView textView = dialogMessage.findViewById(R.id.txtMessage);
-        ImageView imgOk = dialogMessage.findViewById(R.id.imgOk);
-        ImageView imgNotOk = dialogMessage.findViewById(R.id.imgNotOk);
-        ImageView imgTrashCan = dialogMessage.findViewById(R.id.imgTrashCan);
-        imgTrashCan.setVisibility(View.VISIBLE);
-        textView.setText(text);
-
-        AlertDialog dlg = builder.create();
-
-        imgOk.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                broadcastDeleteAlert();
-                dlg.dismiss();
-            }
-
-            private void broadcastDeleteAlert() {
-                Log.d("DENNIS_B", String.format("DialogWrapper.class: (broadcastDeleteAlert) Start %s", HIGHSCORE_DELETE_ACTION));
-                Intent i = new Intent();
-                i.setAction(HIGHSCORE_DELETE_ACTION);
-                context.sendBroadcast(i);
-            }
-        });
-        imgNotOk.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dlg.dismiss();
-            }
-        });
-
-        Log.d("DENNIS_B", "DialogWrapper.class: (createDeleteConfirm) Return dialog");
-        return dlg;
-
-    }
-
-    private static AlertDialog createExitConfirm(String text, Context context){
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-
-        builder.setCancelable(false);
-        LayoutInflater inf = LayoutInflater.from(context);
-        View dialogMessage = inf.inflate(R.layout.dialog_exit_game, null);
+        switch(dlg_type){
+            case LAYOUT_CONFIRM_DELETE:
+                dialogMessage = inf.inflate(R.layout.dialog_delete_highscore, null);
+                ImageView imgTrashCan = dialogMessage.findViewById(R.id.imgTrashCan);
+                imgTrashCan.setVisibility(View.VISIBLE);
+                break;
+            case LAYOUT_CONFIRM_EXIT:
+                dialogMessage = inf.inflate(R.layout.dialog_exit_game, null);
+                break;
+        }
 
         builder.setView(dialogMessage);
 
@@ -237,14 +202,22 @@ public class DialogWrapper implements IGameConstants {
         imgOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                broadcastExitAlert();
+                broadcastAlert();
                 dlg.dismiss();
             }
 
-            private void broadcastExitAlert() {
-                Log.d("DENNIS_B", String.format("DialogWrapper.class: (broadcastExitAlert) Start %s", EXIT_GAME_ACTION));
+            private void broadcastAlert() {
                 Intent i = new Intent();
-                i.setAction(EXIT_GAME_ACTION);
+                switch(dlg_type) {
+                    case LAYOUT_CONFIRM_DELETE:
+                        i.setAction(HIGHSCORE_DELETE_ACTION);
+                        Log.d("DENNIS_B", String.format("DialogWrapper.class: (broadcastAlert) Start %s", HIGHSCORE_DELETE_ACTION));
+                        break;
+                    case LAYOUT_CONFIRM_EXIT:
+                        i.setAction(EXIT_GAME_ACTION);
+                        Log.d("DENNIS_B", String.format("DialogWrapper.class: (broadcastAlert) Start %s", EXIT_GAME_ACTION));
+                        break;
+                }
                 context.sendBroadcast(i);
             }
         });
@@ -254,10 +227,8 @@ public class DialogWrapper implements IGameConstants {
                 dlg.dismiss();
             }
         });
-
-        Log.d("DENNIS_B", "DialogWrapper.class: (createExitConfirm) Return dialog");
+        Log.d("DENNIS_B", "DialogWrapper.class: (createConfirmationDialog) Return dialog");
         return dlg;
-
     }
 
     private static String getExtension(int numberValue){
