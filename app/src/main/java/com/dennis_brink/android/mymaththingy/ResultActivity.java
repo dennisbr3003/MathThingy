@@ -3,15 +3,22 @@ package com.dennis_brink.android.mymaththingy;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.material.snackbar.Snackbar;
 
 public class ResultActivity extends AppCompatActivity implements IGameConstants, IHighScoreDialogListener {
 
@@ -112,6 +119,7 @@ public class ResultActivity extends AppCompatActivity implements IGameConstants,
         return intentFilter;
     }
 
+    @SuppressLint("RestrictedApi")
     @Override
     public void processHighScoreName(String name, String key) {
 
@@ -120,11 +128,66 @@ public class ResultActivity extends AppCompatActivity implements IGameConstants,
         highScore.setPlayerName(key, name);
         highScore.printSet();
 
-        Log.d("DENNIS_B", "ResultActivity.class: (processHighScoreName) show toaster");
-        Toast toast= Toast.makeText(getApplicationContext(),"New high score saved", Toast.LENGTH_SHORT);
-        toast.setGravity(Gravity.BOTTOM,0,0);
-        toast.show();
+        Log.d("DENNIS_B", "ResultActivity.class: (processHighScoreName) show customized snackbar");
+        try {
+            showSnackBar();
+        } catch(Exception e){
+            Log.d("DENNIS_B", "ResultActivity.class: (processHighScoreName) --> " + e.getMessage());
+        }
 
+    }
+
+    @SuppressLint("RestrictedApi")
+    private void showSnackBar(){
+
+        int marginFromSides = 15; // margins for the snackbar relative to the screen edge
+        View view = findViewById(R.id.layoutResultParentLayout); //the layout needs to have an id so it can be found
+        Snackbar snackbar = Snackbar.make(view, "New high score saved...", Snackbar.LENGTH_INDEFINITE);
+
+        Snackbar.SnackbarLayout s_layout = (Snackbar.SnackbarLayout) snackbar.getView();
+        TextView s_textView = s_layout.findViewById(com.google.android.material.R.id.snackbar_text); // get the snackbar textview
+        Button s_button = s_layout.findViewById(com.google.android.material.R.id.snackbar_action); // get the snackbar button
+
+        s_layout.setBackground(getResources().getDrawable(R.drawable.rounded_corners)); // use special shape xml for rounded corners
+        FrameLayout.LayoutParams parentParams = (FrameLayout.LayoutParams) s_layout.getLayoutParams();
+        parentParams.setMargins(marginFromSides, 0, marginFromSides, marginFromSides); // set space between screen edge and snackbar edge to 15
+        parentParams.height = FrameLayout.LayoutParams.WRAP_CONTENT; // increase height to the (new) textview height
+        parentParams.width = FrameLayout.LayoutParams.MATCH_PARENT; // the snackbar will span the entire width
+        s_layout.setLayoutParams(parentParams);
+
+        s_textView.setTextColor(getResources().getColor(R.color.WhiteSmoke)); // set the text color
+        s_textView.setTypeface(s_textView.getTypeface(), Typeface.BOLD); // set the text to bold
+        s_textView.setTextSize(20); // increase text size
+
+        // make sure the height of the textview shows the complete text since it was increased
+        LinearLayout.LayoutParams textViewLayoutParams = (LinearLayout.LayoutParams) s_textView.getLayoutParams();
+        textViewLayoutParams.height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        s_textView.setLayoutParams(textViewLayoutParams);
+
+        s_button.setBackgroundColor(getResources().getColor(R.color.holo_blue_dark));
+        s_button.setTextColor(getResources().getColor(R.color.WhiteSmoke));
+        s_button.setTextSize(14);
+
+        // the button is too close to the left border so it needs to move to the inside
+        LinearLayout.LayoutParams buttonLayoutParams = (LinearLayout.LayoutParams) s_button.getLayoutParams();
+        buttonLayoutParams.rightMargin = buttonLayoutParams.rightMargin + 8;
+        s_button.setLayoutParams(buttonLayoutParams);
+
+        snackbar.setAction("Show me", new View.OnClickListener() { // button on click listener
+            @Override
+            public void onClick(View v) {
+                startHighScore(); // go to highscore activity. Do not close this one so it will open if the user returns
+                snackbar.dismiss();
+            }
+        });
+
+        snackbar.show();
+    }
+
+    private void startHighScore(){
+        // first parameter = from, second parameter what to start, where to
+        Intent i = new Intent(ResultActivity.this, HighScoreActivity.class);
+        startActivity(i); // run it
     }
 
 }
