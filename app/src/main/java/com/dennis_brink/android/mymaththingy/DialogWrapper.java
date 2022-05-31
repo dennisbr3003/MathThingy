@@ -1,5 +1,6 @@
 package com.dennis_brink.android.mymaththingy;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -16,26 +17,26 @@ import android.widget.Toast;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 
-public class DialogWrapper implements IGameConstants {
+public class DialogWrapper implements IGameConstants, ILogConstants {
 
     public static AlertDialog getHighScoreInputDialog(Context context, int rank, String key){
 
         try {
             return createInputDialog(rank + getExtension(rank), key, context);
         } catch (Exception e){
-            Log.d("DENNIS_B", "DialogWrapper.class: (getHighScoreInputDialog) --> " + e.getMessage());
+            Log.d(LOG_TAG, "DialogWrapper.class: (getHighScoreInputDialog) --> " + e.getMessage());
         }
         return null;
     }
 
     public static AlertDialog getStreakMessageDialog(Context context, int streaks){
 
-        String text = String.format("Extra congratulations to you! This is your %s %s answers win streak. You get an extra life and you receive %s * %s = %s bonus points!",
+        @SuppressLint("StringFormatMatches") String text = String.format(context.getString(R.string._streakwin),
                                                    streaks + getExtension(streaks), STREAK, streaks, STREAK_BONUS, (streaks * STREAK_BONUS));
         try {
             return createMessageDialog(text, context);
         } catch (Exception e){
-            Log.d("DENNIS_B", "DialogWrapper.class: (getStreakMessageDialog) --> " + e.getMessage());
+            Log.d(LOG_TAG, "DialogWrapper.class: (getStreakMessageDialog) --> " + e.getMessage());
         }
         return null;
     }
@@ -46,18 +47,18 @@ public class DialogWrapper implements IGameConstants {
         try {
             return createConfirmationDialog(context, LAYOUT_CONFIRM_DELETE, text);
         } catch (Exception e){
-            Log.d("DENNIS_B", "DialogWrapper.class: (getDeleteConfirmDialog) --> " + e.getMessage());
+            Log.d(LOG_TAG, "DialogWrapper.class: (getDeleteConfirmDialog) --> " + e.getMessage());
         }
         return null;
     }
 
     public static AlertDialog getExitConfirmDialog(Context context){
 
-        String text = String.format("Are you sure you want to leave now, you will lose momentum!");
+        String text = context.getString(R.string._momentum);
         try {
             return createConfirmationDialog(context, LAYOUT_CONFIRM_EXIT, text);
         } catch (Exception e){
-            Log.d("DENNIS_B", "DialogWrapper.class: (getExitConfirmDialog) --> " + e.getMessage());
+            Log.d(LOG_TAG, "DialogWrapper.class: (getExitConfirmDialog) --> " + e.getMessage());
         }
         return null;
     }
@@ -80,7 +81,7 @@ public class DialogWrapper implements IGameConstants {
 
         // hide error, do not use "gone" because of constraints
         txtHighScoreError.setVisibility(View.INVISIBLE);
-        String text = String.format("You ranked %s on the high score list. Enter your name and claim your place!", full_rank);
+        String text = String.format(context.getString(R.string._enterhighscore), full_rank);
         txtHighScoreMessage.setText(text);
 
         AlertDialog dlg = builder.create();
@@ -90,8 +91,8 @@ public class DialogWrapper implements IGameConstants {
             @Override
             public void onClick(View v) {
 
-                Log.d("DENNIS_B", "DialogWrapper.class: (imgSaveName.onClick) High Score name empty? " + etxtHighScoreName.getText().toString().isEmpty());
-                Log.d("DENNIS_B", "DialogWrapper.class: (imgSaveName.onClick) High Score name " + etxtHighScoreName.getText().toString());
+                Log.d(LOG_TAG, "DialogWrapper.class: (imgSaveName.onClick) High Score name empty? " + etxtHighScoreName.getText().toString().isEmpty());
+                Log.d(LOG_TAG, "DialogWrapper.class: (imgSaveName.onClick) High Score name " + etxtHighScoreName.getText().toString());
 
                 if(etxtHighScoreName.getText().toString().isEmpty()){
                     txtHighScoreError.setVisibility(View.VISIBLE);
@@ -100,11 +101,11 @@ public class DialogWrapper implements IGameConstants {
                     broadcastHighScoreName(etxtHighScoreName.getText().toString(), key, HIGHSCORE_ACTION);
                     // hide keyboard
                     try {
-                        Log.d("DENNIS_B", "DialogWrapper.class: (imgSaveName.onClick) Hiding soft keyboard");
+                        Log.d(LOG_TAG, "DialogWrapper.class: (imgSaveName.onClick) Hiding soft keyboard");
                         InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm.hideSoftInputFromWindow(etxtHighScoreName.getWindowToken(), 0);
                     }catch(Exception e){
-                        Log.d("DENNIS_B", "DialogWrapper.class: (imgSaveName.onClick) --> " + e.getMessage());
+                        Log.d(LOG_TAG, "DialogWrapper.class: (imgSaveName.onClick) --> " + e.getMessage());
                     }
                     dlg.dismiss();
                 }
@@ -112,7 +113,7 @@ public class DialogWrapper implements IGameConstants {
             }
 
             private void broadcastHighScoreName(String highScoreName, String key, String action) {
-                Log.d("DENNIS_B", String.format("DialogWrapper.class: (broadcastHighScoreName) Start %s sending %s with key %s", action, highScoreName, key));
+                Log.d(LOG_TAG, String.format("DialogWrapper.class: (broadcastHighScoreName) Start %s sending %s with key %s", action, highScoreName, key));
                 Intent i = new Intent();
                 i.setAction(action);
                 i.putExtra(HIGHSCORE_ACTION, highScoreName);
@@ -131,7 +132,7 @@ public class DialogWrapper implements IGameConstants {
             }
         });
 
-        Log.d("DENNIS_B", "DialogWrapper.class: (createInputDialog) Return dialog");
+        Log.d(LOG_TAG, "DialogWrapper.class: (createInputDialog) Return dialog");
         return dlg;
 
     }
@@ -160,14 +161,14 @@ public class DialogWrapper implements IGameConstants {
             }
 
             private void broadcastKeyboardAlert() {
-                Log.d("DENNIS_B", String.format("DialogWrapper.class: (broadcastKeyboardAlert) Start %s", SOFTKEYBOARD_ACTION));
+                Log.d(LOG_TAG, String.format("DialogWrapper.class: (broadcastKeyboardAlert) Start %s", SOFTKEYBOARD_ACTION));
                 Intent i = new Intent();
                 i.setAction(SOFTKEYBOARD_ACTION);
                 context.sendBroadcast(i);
             }
         });
 
-        Log.d("DENNIS_B", "DialogWrapper.class: (createMessageDialog) Return dialog");
+        Log.d(LOG_TAG, "DialogWrapper.class: (createMessageDialog) Return dialog");
         return dlg;
 
     }
@@ -211,11 +212,11 @@ public class DialogWrapper implements IGameConstants {
                 switch(dlg_type) {
                     case LAYOUT_CONFIRM_DELETE:
                         i.setAction(HIGHSCORE_DELETE_ACTION);
-                        Log.d("DENNIS_B", String.format("DialogWrapper.class: (broadcastAlert) Start %s", HIGHSCORE_DELETE_ACTION));
+                        Log.d(LOG_TAG, String.format("DialogWrapper.class: (broadcastAlert) Start %s", HIGHSCORE_DELETE_ACTION));
                         break;
                     case LAYOUT_CONFIRM_EXIT:
                         i.setAction(EXIT_GAME_ACTION);
-                        Log.d("DENNIS_B", String.format("DialogWrapper.class: (broadcastAlert) Start %s", EXIT_GAME_ACTION));
+                        Log.d(LOG_TAG, String.format("DialogWrapper.class: (broadcastAlert) Start %s", EXIT_GAME_ACTION));
                         break;
                 }
                 context.sendBroadcast(i);
@@ -227,7 +228,7 @@ public class DialogWrapper implements IGameConstants {
                 dlg.dismiss();
             }
         });
-        Log.d("DENNIS_B", "DialogWrapper.class: (createConfirmationDialog) Return dialog");
+        Log.d(LOG_TAG, "DialogWrapper.class: (createConfirmationDialog) Return dialog");
         return dlg;
     }
 

@@ -14,7 +14,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
 
-public class HighScore {
+public class HighScore implements ILogConstants {
 
 	private Set<HighScoreEntry> full_list = new TreeSet<>();
 	private Context context;
@@ -44,7 +44,7 @@ public class HighScore {
 
 	public void printSet() {
 		for(HighScoreEntry highScoreEntry: full_list){
-			Log.d("DENNIS_B", "Highscores " + highScoreEntry.toString());
+			Log.d(LOG_TAG, "Highscores " + highScoreEntry.toString());
 		}
 	}
 
@@ -65,7 +65,7 @@ public class HighScore {
 		int i=0;
 		for(HighScoreEntry highScoreEntry: full_list){			
 			if ((i >= startElement) && (i <= endElement)){
-				Log.d("DENNIS_B", "HighScore.class: (getSubSet) Copying " + highScoreEntry.getName() + " rank " + highScoreEntry.getRank());
+				Log.d(LOG_TAG, "HighScore.class: (getSubSet) Copying " + highScoreEntry.getName() + " rank " + highScoreEntry.getRank());
 				target.add(SerializationUtils.clone(highScoreEntry)); // deep copy (not a reference)
 			}
 			i++;
@@ -79,19 +79,19 @@ public class HighScore {
 
 	public int getRank(String key) {
 
-		Log.d("DENNIS_B", "HighScore.class: (getRank) Getting rank with key " + key);
+		Log.d(LOG_TAG, "HighScore.class: (getRank) Getting rank with key " + key);
 		if(!full_list.equals(null)) {
 			printSet();
 			for (HighScoreEntry highScoreEntry : full_list) {
 				if (highScoreEntry.getId().equals(key)) {
-					Log.d("DENNIS_B", "HighScore.class: (getRank) Finding object with id " + key +  " with rank " + highScoreEntry.getRank());
+					Log.d(LOG_TAG, "HighScore.class: (getRank) Finding object with id " + key +  " with rank " + highScoreEntry.getRank());
 					return highScoreEntry.getRank();
 				}
 			}
-			Log.d("DENNIS_B", "HighScore.class: (getRank) Could not find object with id " + key);
+			Log.d(LOG_TAG, "HighScore.class: (getRank) Could not find object with id " + key);
 			return -1; // not a valid key, object with key not found
 		} else{
-			Log.d("DENNIS_B", "HighScore.class: (getRank) Null collection");
+			Log.d(LOG_TAG, "HighScore.class: (getRank) Null collection");
 			return -1; // empty collection, object with key not found
 		}
 	}
@@ -112,7 +112,7 @@ public class HighScore {
 	public void clearSet() {
 		try {
 			this.full_list.clear();
-			Log.d("DENNIS_B", "HighScore.class: (clearSet) Executed");
+			Log.d(LOG_TAG, "HighScore.class: (clearSet) Executed");
 		} finally {
 			writeHighScoresToFile();
 		}
@@ -123,9 +123,9 @@ public class HighScore {
 			HighScoreEntry highScoreEntry = new HighScoreEntry(score, time,  streaks, name);
 			this.full_list.add(highScoreEntry);
 			rankSet();
-			Log.d("DENNIS_B", "HighScore.class: (addHighScoreEntry) Added high score object with id " + highScoreEntry.getId() +  " with rank " + highScoreEntry.getRank());
+			Log.d(LOG_TAG, "HighScore.class: (addHighScoreEntry) Added high score object with id " + highScoreEntry.getId() +  " with rank " + highScoreEntry.getRank());
 			if(full_list.size() > this.numberOfElements) {
-				Log.d("DENNIS_B", "HighScore.class: (addHighScoreEntry) Number of elements, " + full_list.size() + ", is greater then the maximum number of objects allowed (" + this.numberOfElements + "); start to trim the set");
+				Log.d(LOG_TAG, "HighScore.class: (addHighScoreEntry) Number of elements, " + full_list.size() + ", is greater then the maximum number of objects allowed (" + this.numberOfElements + "); start to trim the set");
 				trimHighScoreSet(); // reduce it to 10 elements or less
 			}
 			return highScoreEntry.getId(); // return id just created

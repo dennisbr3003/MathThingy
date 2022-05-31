@@ -15,7 +15,7 @@ import com.github.clans.fab.FloatingActionButton;
 
 import java.util.ArrayList;
 
-public class HighScoreActivity extends AppCompatActivity implements IGameConstants, IHighScoreDeleteListener {
+public class HighScoreActivity extends AppCompatActivity implements IGameConstants, IHighScoreDeleteListener, ILogConstants {
 
     HighScore highScore;
     private RecyclerView recyclerView;
@@ -40,7 +40,7 @@ public class HighScoreActivity extends AppCompatActivity implements IGameConstan
             full_list_as_array = highScore.getSetAsArray();
             setWinnerTextView(full_list_as_array);
         } catch(Exception e){
-            Log.d("DENNIS_B", "HighScoreActivity.class: (onCreate) --> " + e.getMessage());
+            Log.d(LOG_TAG, "HighScoreActivity.class: (onCreate) --> " + e.getMessage());
         }
 
         recyclerView = findViewById(R.id.recyclerView);
@@ -92,18 +92,18 @@ public class HighScoreActivity extends AppCompatActivity implements IGameConstan
     public void deleteHighScoreList() {
 
         full_list_as_array.clear(); // clear the high score arraylist used in the activity
-        Log.d("DENNIS_B", "HighScoreActivity.class: (deleteHighScoreList) Local arraylist cleared");
+        Log.d(LOG_TAG, "HighScoreActivity.class: (deleteHighScoreList) Local arraylist cleared");
         highScore.clearSet(); // clear the TreeSet and save it to file
-        Log.d("DENNIS_B", "HighScoreActivity.class: (deleteHighScoreList) Saved TreeSet cleared and written");
+        Log.d(LOG_TAG, "HighScoreActivity.class: (deleteHighScoreList) Saved TreeSet cleared and written");
         adapter.notifyDataSetChanged();  // notify adapter to refresh itself
-        Log.d("DENNIS_B", "HighScoreActivity.class: (deleteHighScoreList) Adapter notified of changes in data");
+        Log.d(LOG_TAG, "HighScoreActivity.class: (deleteHighScoreList) Adapter notified of changes in data");
         setWinnerTextView(full_list_as_array); // show/hide textview
 
     }
 
     private IntentFilter getFilter(){
         IntentFilter intentFilter = new IntentFilter();
-        Log.d("DENNIS_B", "HighScoreActivity.class: (getFilter) Registering for broadcast action " + HIGHSCORE_DELETE_ACTION);
+        Log.d(LOG_TAG, "HighScoreActivity.class: (getFilter) Registering for broadcast action " + HIGHSCORE_DELETE_ACTION);
         intentFilter.addAction(HIGHSCORE_DELETE_ACTION); // only register receiver for this event
         return intentFilter;
     }
@@ -112,7 +112,7 @@ public class HighScoreActivity extends AppCompatActivity implements IGameConstan
     protected void onPause() {
         super.onPause();
         if (receiver != null){
-            Log.d("DENNIS_B", "HighScoreActivity.class: (onPause) Unregistering receiver");
+            Log.d(LOG_TAG, "HighScoreActivity.class: (onPause) Unregistering receiver");
             this.unregisterReceiver(receiver);
             receiver = null;
         }
@@ -122,7 +122,7 @@ public class HighScoreActivity extends AppCompatActivity implements IGameConstan
     protected void onResume() {
         super.onResume();
         if(receiver == null){
-            Log.d("DENNIS_B", "HighScoreActivity.class: (onResume) Registering receiver");
+            Log.d(LOG_TAG, "HighScoreActivity.class: (onResume) Registering receiver");
             receiver = new Receiver();
             receiver.setHighScoreDeleteDialogListener(this);
         }

@@ -26,7 +26,7 @@
         android:layout_height="24dp"
         android:layout_marginStart="5dp"
         android:layout_marginEnd="8dp"
-        android:text="(You must enter a valid name)"
+        android:text="@string/_validname"
         android:textColor="@color/win8_red"
         android:textStyle="bold"
         android:visibility="visible"
@@ -43,7 +43,7 @@
         android:layout_marginEnd="2dp"
         android:backgroundTint="@color/WhiteSmoke"
         android:ems="10"
-        android:hint="Type your name here..."
+        android:hint="@string/_yourname"
         android:inputType="textPersonName"
         android:minHeight="48dp"
         android:textAlignment="textStart"
@@ -59,7 +59,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="13dp"
-        android:text="message"
+        android:text="@string/_message"
         android:textAlignment="center"
         android:textColor="@color/WhiteSmoke"
         android:textSize="16sp"
@@ -91,7 +91,6 @@
         app:srcCompat="@drawable/speech_bubble" />
 
     <ImageView
-        android:id="@+id/imgCongratulations"
         android:layout_width="200dp"
         android:layout_height="78dp"
         android:layout_marginStart="96dp"

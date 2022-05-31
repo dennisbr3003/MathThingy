@@ -17,7 +17,6 @@
         app:srcCompat="@drawable/owl_orange" />
 
     <ImageView
-        android:id="@+id/imageView7"
         android:layout_width="103dp"
         android:layout_height="68dp"
         android:layout_marginTop="4dp"
@@ -41,7 +40,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="13dp"
-        android:text="Message"
+        android:text="@string/_message"
         android:textAlignment="center"
         android:textColor="@color/WhiteSmoke"
         android:textSize="16sp"

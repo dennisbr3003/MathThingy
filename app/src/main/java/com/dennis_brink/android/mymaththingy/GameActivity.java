@@ -5,6 +5,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -25,7 +26,7 @@ import android.widget.TextView;
 import java.util.Locale;
 import java.util.Random;
 
-public class GameActivity extends AppCompatActivity implements IGameConstants, IGameActivityListener {
+public class GameActivity extends AppCompatActivity implements IGameConstants, IGameActivityListener, ILogConstants {
 
     TextView txtScore;
     TextView txtLife;
@@ -49,7 +50,6 @@ public class GameActivity extends AppCompatActivity implements IGameConstants, I
 
     int number1;
     int number2;
-    int calculatedAnswer;
     int userScore;
     int userTime;
     int userLives;
@@ -70,7 +70,7 @@ public class GameActivity extends AppCompatActivity implements IGameConstants, I
         Intent i = getIntent();
         operator = i.getStringExtra(GAME_MODE);   // add, sub, multi
 
-        Log.d("DENNIS_B", "GameActivity.class: (onCreate) Operator " + operator);
+        Log.d(LOG_TAG, "GameActivity.class: (onCreate) Operator " + operator);
 
         setupLogo();
 
@@ -82,18 +82,19 @@ public class GameActivity extends AppCompatActivity implements IGameConstants, I
 
                 if(actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_NULL || event.getKeyCode() == KeyEvent.KEYCODE_ENTER){
                     if(!lQuestionActive){
-                        Log.d("DENNIS_B", "GameActivity.class: (btnOk.onClick) No active question, nothing to submit");
+                        Log.d(LOG_TAG, "GameActivity.class: (btnOk.onClick) No active question, nothing to submit");
                         return true;
                     }
                     lSubmitted = true; // set switch
                     lQuestionActive = false; // reset switch
 
-                    Log.d("DENNIS_B", "GameActivity.class: (etxtNumberAnswer.onEditorAction) Answer submitted by keyboard <ok> " + lSubmitted);
+                    Log.d(LOG_TAG, "GameActivity.class: (etxtNumberAnswer.onEditorAction) Answer submitted by keyboard <ok> " + lSubmitted);
 
                     try { // fails if no calculatedAnswer is given or something not numerical
-                        processAnswer(Integer.valueOf(etxtNumberAnswer.getText().toString()));
+                        Session.getInstance().setUserAnswer(Integer.parseInt(etxtNumberAnswer.getText().toString()));
+                        processAnswer();
                     } catch(Exception e){
-                        Log.d("DENNIS_B", "GameActivity.class: (etxtNumberAnswer.onEditorAction) Answer submitted was not numerical (int)");
+                        Log.d(LOG_TAG, "GameActivity.class: (etxtNumberAnswer.onEditorAction) Answer submitted was not numerical (int)");
                         processIncorrectInput(2);
                     }
                     return true;
@@ -107,17 +108,18 @@ public class GameActivity extends AppCompatActivity implements IGameConstants, I
             @Override
             public void onClick(View v) {
                 if(!lQuestionActive){
-                    Log.d("DENNIS_B", "GameActivity.class: (btnOk.onClick) No active question, nothing to submit");
+                    Log.d(LOG_TAG, "GameActivity.class: (btnOk.onClick) No active question, nothing to submit");
                     return;
                 }
                 lSubmitted = true; // set switch
                 lQuestionActive = false; // reset switch
-                Log.d("DENNIS_B", "GameActivity.class: (btnOk.onClick) Answer submitted by btnOk <Submit>" + lSubmitted);
+                Log.d(LOG_TAG, "GameActivity.class: (btnOk.onClick) Answer submitted by btnOk <Submit>" + lSubmitted);
 
                 try { // fails if no answer is given or the answer is something not numerical
-                    processAnswer(Integer.valueOf(etxtNumberAnswer.getText().toString()));
+                    Session.getInstance().setUserAnswer(Integer.parseInt(etxtNumberAnswer.getText().toString()));
+                    processAnswer();
                 } catch(Exception e){
-                    Log.d("DENNIS_B", "GameActivity.class: (btnOk.onClick) Answer submitted was not numerical (int)");
+                    Log.d(LOG_TAG, "GameActivity.class: (btnOk.onClick) Answer submitted was not numerical (int)");
                     processIncorrectInput(2);
                 }
             }
@@ -128,20 +130,20 @@ public class GameActivity extends AppCompatActivity implements IGameConstants, I
             @Override
             public void onClick(View v) {
 
-                Log.d("DENNIS_B", "GameActivity.class: (btnNext.onClick) Answer submitted " + lSubmitted);
-                Log.d("DENNIS_B", "GameActivity.class: (btnNext.onClick) First question  " +  btnNext.getText().equals(FIRST_USE));
+                Log.d(LOG_TAG, "GameActivity.class: (btnNext.onClick) Answer submitted " + lSubmitted);
+                Log.d(LOG_TAG, "GameActivity.class: (btnNext.onClick) First question  " +  btnNext.getText().equals(FIRST_USE));
 
                 if((btnNext.getText().equals(FIRST_USE)) || lLaunchSoftKeyboard){
-                    Log.d("DENNIS_B", "GameActivity.class: (btnNext.onClick) First use, launch keyboard programmatically");
+                    Log.d(LOG_TAG, "GameActivity.class: (btnNext.onClick) First use, launch keyboard programmatically");
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
                 }
 
                 if((!lSubmitted) && (!btnNext.getText().equals(FIRST_USE))){
-                    Log.d("DENNIS_B", "GameActivity.class: (btnNext.onClick) Answer was not submitted nor is it the first question --> deduct life");
+                    Log.d(LOG_TAG, "GameActivity.class: (btnNext.onClick) Answer was not submitted nor is it the first question --> deduct life");
                     processIncorrectInput(2);
                 } else{
-                    Log.d("DENNIS_B", "GameActivity.class: (btnNext.onClick) Answer was submitted or it's a first use --> do not deduct life");
+                    Log.d(LOG_TAG, "GameActivity.class: (btnNext.onClick) Answer was submitted or it's a first use --> do not deduct life");
                 }
 
                 lSubmitted = false; // reset switch
@@ -189,7 +191,7 @@ public class GameActivity extends AppCompatActivity implements IGameConstants, I
         switch(operator){
             case OPERATOR_ADD:
                 txtQuestion.setText(String.format("%s %s %s", number1, "+", number2));
-                calculatedAnswer = number1 + number2;
+                Session.getInstance().setCalculatedAnswer(number1 + number2);
                 break;
             case OPERATOR_SUB:
                 if(number1 < number2){ // switch to avoid negative numbers
@@ -197,36 +199,38 @@ public class GameActivity extends AppCompatActivity implements IGameConstants, I
                 } else {
                     txtQuestion.setText(String.format("%s %s %s", number1, "-", number2));
                 }
-                calculatedAnswer = Math.abs(number1 - number2);
+                Session.getInstance().setCalculatedAnswer(Math.abs(number1 - number2));
                 break;
             case OPERATOR_MULTI:
                 number1 = random.nextInt(10); // too difficult otherwise for 15 secs of time
                 txtQuestion.setText(String.format("%s %s %s", number1, "*", number2));
-                calculatedAnswer = number1 * number2;
+                Session.getInstance().setCalculatedAnswer(Math.abs(number1 * number2));
                 break;
             default:
-                txtQuestion.setText("ERROR");
+                txtQuestion.setText(R.string._error);
+                Session.getInstance().setCalculatedAnswer(-1);
                 break;
         }
         startTimer();
     }
 
-    public void processAnswer(int userAnswer){
+    @SuppressLint("StringFormatMatches")
+    public void processAnswer(){
 
         pauseTimer();
 
         userTime += ((int)(START_TIMER_IN_MILLIS / 1000) - ((time_left_in_millies / 1000) % 60)); // time taken to get answer
 
-        Log.d("DENNIS_B", "GameActivity.class: (processAnswer) User answer " + userAnswer);
-        Log.d("DENNIS_B", "GameActivity.class: (processAnswer) Calculated answer " + calculatedAnswer);
+        Log.d(LOG_TAG, "GameActivity.class: (processAnswer) User answer (Session singleton) " + Session.getInstance().getUserAnswer());
+        Log.d(LOG_TAG, "GameActivity.class: (processAnswer) Calculated answer (Session singleton) " + Session.getInstance().getCalculatedAnswer());
 
         etxtNumberAnswer.setText("");
         etxtNumberAnswer.setVisibility(View.INVISIBLE);
 
-        if(userAnswer == calculatedAnswer) {
+        if(Session.getInstance().getUserAnswer() == Session.getInstance().getCalculatedAnswer()) {
 
             // correct
-            txtQuestion.setText(String.format("Congratulations, your answer %s is correct", userAnswer));
+            txtQuestion.setText(String.format(getString(R.string._correctanswer), Session.getInstance().getUserAnswer()));
             correctAnswerStreak++;
             userScore += CORRECT_ANSWER;
 
@@ -247,7 +251,7 @@ public class GameActivity extends AppCompatActivity implements IGameConstants, I
 
             }
 
-            Log.d("DENNIS_B", "GameActivity.class: (processAnswer) Correct answer. Streakcounter is set to " + correctAnswerStreak);
+            Log.d(LOG_TAG, "GameActivity.class: (processAnswer) Correct answer. Streakcounter is set to " + correctAnswerStreak);
 
         } else {
             // wrong, no points, streak is gone
@@ -304,7 +308,7 @@ public class GameActivity extends AppCompatActivity implements IGameConstants, I
         // first parameter = from, second parameter what to start
         Intent i = new Intent(GameActivity.this, ResultActivity.class);
 
-        Log.d("DENNIS_B", "GameActivity.class: (startResult) Starting result intent with "  + finalScore + " and " + finalTime);
+        Log.d(LOG_TAG, "GameActivity.class: (startResult) Starting result intent with "  + finalScore + " and " + finalTime);
 
         try {
             i.putExtra(USER_SCORE, finalScore);
@@ -313,13 +317,13 @@ public class GameActivity extends AppCompatActivity implements IGameConstants, I
             startActivity(i); // run it
             finish(); // close this one
         } catch (Exception e){
-            Log.d("DENNIS_B", "GameActivity.class: (startResult) --> " + e.getMessage());
+            Log.d(LOG_TAG, "GameActivity.class: (startResult) --> " + e.getMessage());
         }
     }
 
     private IntentFilter getFilter(){
         IntentFilter intentFilter = new IntentFilter();
-        Log.d("DENNIS_B", "GameActivity.class: (getFilter) Registering for broadcast action " + SOFTKEYBOARD_ACTION + " and " + EXIT_GAME_ACTION);
+        Log.d(LOG_TAG, "GameActivity.class: (getFilter) Registering for broadcast action " + SOFTKEYBOARD_ACTION + " and " + EXIT_GAME_ACTION);
         intentFilter.addAction(SOFTKEYBOARD_ACTION); // only register receiver for this event
         intentFilter.addAction(EXIT_GAME_ACTION);
         return intentFilter;
@@ -329,7 +333,7 @@ public class GameActivity extends AppCompatActivity implements IGameConstants, I
     protected void onPause() {
         super.onPause();
         if (receiver != null){
-            Log.d("DENNIS_B", "GameActivity.class: (onPause) Unregistering receiver");
+            Log.d(LOG_TAG, "GameActivity.class: (onPause) Unregistering receiver");
             this.unregisterReceiver(receiver);
             receiver = null;
         }
@@ -339,7 +343,7 @@ public class GameActivity extends AppCompatActivity implements IGameConstants, I
     protected void onResume() {
         super.onResume();
         if(receiver == null){
-            Log.d("DENNIS_B", "GameActivity.class: (onResume) Registering receiver");
+            Log.d(LOG_TAG, "GameActivity.class: (onResume) Registering receiver");
             receiver = new Receiver();
             receiver.setGameActivityListener(this);
         }
@@ -363,27 +367,28 @@ public class GameActivity extends AppCompatActivity implements IGameConstants, I
         correctAnswerStreak = 0;
 
         etxtNumberAnswer.setVisibility(View.INVISIBLE);
-        txtQuestion.setText("Get the first question by hitting the 'First Question' button");
+        txtQuestion.setText(R.string._hitfirstquestion);
         btnNext.setText(FIRST_USE);
 
     }
 
+    @SuppressLint("StringFormatMatches")
     private void processIncorrectInput(int displayText){
 
-        Log.d("DENNIS_B", "GameActivity.class: (processIncorrectInput) Set to display text " +displayText);
+        Log.d(LOG_TAG, "GameActivity.class: (processIncorrectInput) Set to display text " +displayText);
 
         switch(displayText){
             case 1:
-                txtQuestion.setText(String.format("So sad, your answer %s is wrong. It should be %s. You loose a life and the streak.", etxtNumberAnswer.getText().toString(), calculatedAnswer));
+                txtQuestion.setText(String.format(getString(R.string._wronganswer), Session.getInstance().getUserAnswer(), Session.getInstance().getCalculatedAnswer()));
                 break;
             case 2:
-                txtQuestion.setText(String.format("So sad, your answer '%s' is totally wrong. It's not even a decent number.", etxtNumberAnswer.getText().toString()));
+                txtQuestion.setText(String.format(getString(R.string._nonnumerical), Session.getInstance().getUserAnswer()));
                 break;
             case 3:
-                txtQuestion.setText("You're too slow, time is up! This snail pace will cost you a life!");
+                txtQuestion.setText(R.string._snailpace);
                 break;
             default:
-                txtQuestion.setText("Computer says 'no'");
+                txtQuestion.setText(R.string._computersaysno);
                 break;
         }
 
@@ -413,7 +418,7 @@ public class GameActivity extends AppCompatActivity implements IGameConstants, I
 
     @Override
     public void launchSoftKeyBoard() {
-        Log.d("DENNIS_B", "GameActivity.class: (launchSoftKeyBoard) Streak completed, dialog was closed. Launch soft keyboard");
+        Log.d(LOG_TAG, "GameActivity.class: (launchSoftKeyBoard) Streak completed, dialog was closed. Launch soft keyboard");
         lLaunchSoftKeyboard = true;
         updateScoreBoard();
 
@@ -422,8 +427,8 @@ public class GameActivity extends AppCompatActivity implements IGameConstants, I
     private void setupLogo(){
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setLogo(R.drawable.mt_logo_padding);
-        getSupportActionBar().setTitle("Math Thingy");
-        getSupportActionBar().setSubtitle("Are you the human calculator?");
+        getSupportActionBar().setTitle(getString(R.string._appname));
+        getSupportActionBar().setSubtitle(getString(R.string._humancalculator));
         getSupportActionBar().setDisplayUseLogoEnabled(true);
     }
 

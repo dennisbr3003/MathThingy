@@ -20,7 +20,7 @@ import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
 
-public class ResultActivity extends AppCompatActivity implements IGameConstants, IHighScoreDialogListener {
+public class ResultActivity extends AppCompatActivity implements IGameConstants, IHighScoreDialogListener, ILogConstants {
 
     Button btnAgain;
     Button btnExit;
@@ -32,6 +32,7 @@ public class ResultActivity extends AppCompatActivity implements IGameConstants,
     HighScore highScore;
     Receiver receiver = null;
 
+    @SuppressLint("StringFormatMatches")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -42,7 +43,9 @@ public class ResultActivity extends AppCompatActivity implements IGameConstants,
         btnExit = findViewById(R.id.btnClose);
         txtYourScore = findViewById(R.id.txtYourScore);
 
-        Log.d("DENNIS_B", "ResultActivity.class: (onCreate)  Start");
+        Log.d(LOG_TAG, "ResultActivity.class: (onCreate)  Start");
+
+        setupLogo();
 
         // getting data from the intent
         Intent i = getIntent();
@@ -50,16 +53,16 @@ public class ResultActivity extends AppCompatActivity implements IGameConstants,
         user_time = i.getIntExtra(USER_TIME, 0);
         user_streaks = i.getIntExtra(USER_STREAKS, 0);
 
-        Log.d("DENNIS_B", "ResultActivity.class: (onCreate) Score from intent " + user_score + ", time from intent " + user_time);
+        Log.d(LOG_TAG, "ResultActivity.class: (onCreate) Score from intent " + user_score + ", time from intent " + user_time);
 
-        txtYourScore.setText(String.format("You scored an amazing %s points!", user_score));
+        txtYourScore.setText(String.format(getString(R.string._yourscore), user_score));
 
         highScore = new HighScore(ResultActivity.this, HIGHSCORE_LISTLENGTH);
         String highscore_key = highScore.addHighScoreEntry(user_score, user_time, "ABC", user_streaks);
         user_rank = highScore.getRank(highscore_key); // if rank = -1 the score did not make the list
 
-        Log.d("DENNIS_B", "ResultActivity.class: (onCreate) Key for ranking " + highscore_key);
-        Log.d("DENNIS_B", "ResultActivity.class: (onCreate) Rank " + user_rank);
+        Log.d(LOG_TAG, "ResultActivity.class: (onCreate) Key for ranking " + highscore_key);
+        Log.d(LOG_TAG, "ResultActivity.class: (onCreate) Rank " + user_rank);
 
         // dialog here
         if(user_rank != -1) {
@@ -83,11 +86,19 @@ public class ResultActivity extends AppCompatActivity implements IGameConstants,
 
     }
 
+    private void setupLogo(){
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setLogo(R.drawable.rs_logo_padding);
+        getSupportActionBar().setTitle(R.string._results);
+        getSupportActionBar().setSubtitle(getString(R.string._topten));
+        getSupportActionBar().setDisplayUseLogoEnabled(true);
+    }
+
     @Override
     protected void onPause() {
         super.onPause();
         if (receiver != null){
-            Log.d("DENNIS_B", "ResultActivity.class: (onPause) Unregistering receiver");
+            Log.d(LOG_TAG, "ResultActivity.class: (onPause) Unregistering receiver");
             this.unregisterReceiver(receiver);
             receiver = null;
         }
@@ -97,7 +108,7 @@ public class ResultActivity extends AppCompatActivity implements IGameConstants,
     protected void onResume() {
         super.onResume();
         if(receiver == null){
-            Log.d("DENNIS_B", "ResultActivity.class: (onResume) Registering receiver");
+            Log.d(LOG_TAG, "ResultActivity.class: (onResume) Registering receiver");
             receiver = new Receiver();
             receiver.setHighScoreDialogListener(this);
             this.registerReceiver(receiver, getFilter());
@@ -114,7 +125,7 @@ public class ResultActivity extends AppCompatActivity implements IGameConstants,
 
     private IntentFilter getFilter(){
         IntentFilter intentFilter = new IntentFilter();
-        Log.d("DENNIS_B", "ResultActivity.class: (getFilter) Registering for broadcast action " + HIGHSCORE_ACTION);
+        Log.d(LOG_TAG, "ResultActivity.class: (getFilter) Registering for broadcast action " + HIGHSCORE_ACTION);
         intentFilter.addAction(HIGHSCORE_ACTION); // only register receiver for this event
         return intentFilter;
     }
@@ -123,16 +134,16 @@ public class ResultActivity extends AppCompatActivity implements IGameConstants,
     @Override
     public void processHighScoreName(String name, String key) {
 
-        Log.d("DENNIS_B", String.format("ResultActivity.class: (processHighScoreName) update high score entry with name %s and key %s", name, key));
+        Log.d(LOG_TAG, String.format("ResultActivity.class: (processHighScoreName) update high score entry with name %s and key %s", name, key));
         highScore = new HighScore(ResultActivity.this, HIGHSCORE_LISTLENGTH);
         highScore.setPlayerName(key, name);
         highScore.printSet();
 
-        Log.d("DENNIS_B", "ResultActivity.class: (processHighScoreName) show customized snackbar");
+        Log.d(LOG_TAG, "ResultActivity.class: (processHighScoreName) show customized snackbar");
         try {
             showSnackBar();
         } catch(Exception e){
-            Log.d("DENNIS_B", "ResultActivity.class: (processHighScoreName) --> " + e.getMessage());
+            Log.d(LOG_TAG, "ResultActivity.class: (processHighScoreName) --> " + e.getMessage());
         }
 
     }
@@ -142,7 +153,7 @@ public class ResultActivity extends AppCompatActivity implements IGameConstants,
 
         int marginFromSides = 15; // margins for the snackbar relative to the screen edge
         View view = findViewById(R.id.layoutResultParentLayout); //the layout needs to have an id so it can be found
-        Snackbar snackbar = Snackbar.make(view, "New high score saved...", Snackbar.LENGTH_INDEFINITE);
+        Snackbar snackbar = Snackbar.make(view, R.string._newhighscore, Snackbar.LENGTH_INDEFINITE);
 
         Snackbar.SnackbarLayout s_layout = (Snackbar.SnackbarLayout) snackbar.getView();
         TextView s_textView = s_layout.findViewById(com.google.android.material.R.id.snackbar_text); // get the snackbar textview
@@ -173,12 +184,10 @@ public class ResultActivity extends AppCompatActivity implements IGameConstants,
         buttonLayoutParams.rightMargin = buttonLayoutParams.rightMargin + 8;
         s_button.setLayoutParams(buttonLayoutParams);
 
-        snackbar.setAction("Show me", new View.OnClickListener() { // button on click listener
-            @Override
-            public void onClick(View v) {
-                startHighScore(); // go to highscore activity. Do not close this one so it will open if the user returns
-                snackbar.dismiss();
-            }
+        // button on click listener
+        snackbar.setAction(R.string._showme, v -> {
+            startHighScore(); // go to high score activity. Do not close this one so it will open if the user returns
+            snackbar.dismiss();
         });
 
         snackbar.show();

@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.Set;
 
-public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.HighScoreViewHolder>{
+public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.HighScoreViewHolder> implements ILogConstants {
 
     private Set<HighScore.HighScoreEntry> full_list;
     private ArrayList<HighScore.HighScoreEntry> full_list_array_list;
@@ -38,7 +38,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.HighSc
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.highscore_card_design, parent, false);
             return new HighScoreViewHolder(view);
         } catch (Exception e){
-            Log.d("DENNIS_B", "RecyclerAdapter.class: (onCreateViewHolder) --> " + e.getMessage());
+            Log.d(LOG_TAG, "RecyclerAdapter.class: (onCreateViewHolder) --> " + e.getMessage());
             return null;
         }
     }
@@ -54,7 +54,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.HighSc
             holder.textHighScoreTime.setText((String.valueOf(full_list_array_list.get(position).getTime())));
             holder.imageRank.setImageResource(imageList.get(position));
         } catch (Exception e){
-            Log.d("DENNIS_B", "RecyclerAdapter.class: (onBindViewHolder) --> " + e.getMessage());
+            Log.d(LOG_TAG, "RecyclerAdapter.class: (onBindViewHolder) --> " + e.getMessage());
         }
 /*
         holder.cardView.setOnClickListener(new View.OnClickListener() {
@@ -91,7 +91,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.HighSc
                 imageRank = itemView.findViewById(R.id.imageRank);
                 cardView = itemView.findViewById(R.id.cardViewListItem);
             } catch (Exception e){
-                Log.d("DENNIS_B", "RecyclerAdapter.class: (HighScoreViewHolder) --> " + e.getMessage());
+                Log.d(LOG_TAG, "RecyclerAdapter.class: (HighScoreViewHolder) --> " + e.getMessage());
             }
 
         }

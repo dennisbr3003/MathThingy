@@ -66,7 +66,7 @@
         android:id="@+id/txtNoWinners"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="There are no winners here..."
+        android:text="@string/_nowinnershere"
         android:textAlignment="center"
         android:textColor="@color/WhiteSmoke"
         android:textSize="20sp"
