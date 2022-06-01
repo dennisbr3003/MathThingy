@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity implements IGameConstants, I
         Log.d(LOG_TAG, "MainActivity.class: (onCreate) Start Math Thingy");
 
         setContentView(R.layout.activity_main);
-
+        setupLogo();
         btnAdd = findViewById(R.id.btnAdd);
         btnSub = findViewById(R.id.btnSubtract);
         btnMulti = findViewById(R.id.btnMultiply);
@@ -83,6 +83,14 @@ public class MainActivity extends AppCompatActivity implements IGameConstants, I
         Intent i = new Intent(MainActivity.this, HighScoreActivity.class);
         startActivity(i); // run it
         //finish(); // close this activity
+    }
+
+    private void setupLogo(){
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setLogo(R.drawable.mt_logo_padding_main);
+        getSupportActionBar().setTitle(getString(R.string._appname));
+        getSupportActionBar().setSubtitle(getString(R.string._favoperator));
+        getSupportActionBar().setDisplayUseLogoEnabled(true);
     }
 
 }

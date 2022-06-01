@@ -32,6 +32,8 @@ public class HighScoreActivity extends AppCompatActivity implements IGameConstan
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_high_score);
 
+        setupLogo();
+
         floatingActionButton = findViewById(R.id.fabDelete);
         txtWinners = findViewById(R.id.txtNoWinners);
         highScore = new HighScore(HighScoreActivity.this, HIGHSCORE_LISTLENGTH);
@@ -129,5 +131,12 @@ public class HighScoreActivity extends AppCompatActivity implements IGameConstan
         this.registerReceiver(receiver, getFilter());
     }
 
+    private void setupLogo(){
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setLogo(R.drawable.mt_logo_padding_highscore);
+        getSupportActionBar().setTitle("");
+        getSupportActionBar().setSubtitle("");
+        getSupportActionBar().setDisplayUseLogoEnabled(true);
+    }
 
 }
