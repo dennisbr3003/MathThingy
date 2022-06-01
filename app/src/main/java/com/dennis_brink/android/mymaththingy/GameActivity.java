@@ -50,11 +50,8 @@ public class GameActivity extends AppCompatActivity implements IGameConstants, I
 
     int number1;
     int number2;
-    int userScore;
-    int userTime;
-    int userLives;
-    int userStreaks = 0;
-    int correctAnswerStreak; // 10 = extra life
+
+    Game game = new Game();
 
     long time_left_in_millies = START_TIMER_IN_MILLIS;
 
@@ -91,7 +88,7 @@ public class GameActivity extends AppCompatActivity implements IGameConstants, I
                     Log.d(LOG_TAG, "GameActivity.class: (etxtNumberAnswer.onEditorAction) Answer submitted by keyboard <ok> " + lSubmitted);
 
                     try { // fails if no calculatedAnswer is given or something not numerical
-                        Session.getInstance().setUserAnswer(Integer.parseInt(etxtNumberAnswer.getText().toString()));
+                        game.setUserAnswer(Integer.parseInt(etxtNumberAnswer.getText().toString()));
                         processAnswer();
                     } catch(Exception e){
                         Log.d(LOG_TAG, "GameActivity.class: (etxtNumberAnswer.onEditorAction) Answer submitted was not numerical (int)");
@@ -116,7 +113,7 @@ public class GameActivity extends AppCompatActivity implements IGameConstants, I
                 Log.d(LOG_TAG, "GameActivity.class: (btnOk.onClick) Answer submitted by btnOk <Submit>" + lSubmitted);
 
                 try { // fails if no answer is given or the answer is something not numerical
-                    Session.getInstance().setUserAnswer(Integer.parseInt(etxtNumberAnswer.getText().toString()));
+                    game.setUserAnswer(Integer.parseInt(etxtNumberAnswer.getText().toString()));
                     processAnswer();
                 } catch(Exception e){
                     Log.d(LOG_TAG, "GameActivity.class: (btnOk.onClick) Answer submitted was not numerical (int)");
@@ -191,7 +188,7 @@ public class GameActivity extends AppCompatActivity implements IGameConstants, I
         switch(operator){
             case OPERATOR_ADD:
                 txtQuestion.setText(String.format("%s %s %s", number1, "+", number2));
-                Session.getInstance().setCalculatedAnswer(number1 + number2);
+                game.setCalculatedAnswer(number1 + number2);
                 break;
             case OPERATOR_SUB:
                 if(number1 < number2){ // switch to avoid negative numbers
@@ -199,16 +196,16 @@ public class GameActivity extends AppCompatActivity implements IGameConstants, I
                 } else {
                     txtQuestion.setText(String.format("%s %s %s", number1, "-", number2));
                 }
-                Session.getInstance().setCalculatedAnswer(Math.abs(number1 - number2));
+                game.setCalculatedAnswer(Math.abs(number1 - number2));
                 break;
             case OPERATOR_MULTI:
                 number1 = random.nextInt(10); // too difficult otherwise for 15 secs of time
                 txtQuestion.setText(String.format("%s %s %s", number1, "*", number2));
-                Session.getInstance().setCalculatedAnswer(Math.abs(number1 * number2));
+                game.setCalculatedAnswer(number1 * number2);
                 break;
             default:
                 txtQuestion.setText(R.string._error);
-                Session.getInstance().setCalculatedAnswer(-1);
+                game.setCalculatedAnswer(-1);
                 break;
         }
         startTimer();
@@ -219,39 +216,40 @@ public class GameActivity extends AppCompatActivity implements IGameConstants, I
 
         pauseTimer();
 
-        userTime += ((int)(START_TIMER_IN_MILLIS / 1000) - ((time_left_in_millies / 1000) % 60)); // time taken to get answer
+        //userTime += ((int)(START_TIMER_IN_MILLIS / 1000) - ((time_left_in_millies / 1000) % 60)); // time taken to get answer
+        game.incrementUserTime((int) ((START_TIMER_IN_MILLIS / 1000) - ((time_left_in_millies / 1000) % 60)));
 
-        Log.d(LOG_TAG, "GameActivity.class: (processAnswer) User answer (Session singleton) " + Session.getInstance().getUserAnswer());
-        Log.d(LOG_TAG, "GameActivity.class: (processAnswer) Calculated answer (Session singleton) " + Session.getInstance().getCalculatedAnswer());
+        Log.d(LOG_TAG, "GameActivity.class: (processAnswer) User answer (Session singleton) " + game.getUserAnswer());
+        Log.d(LOG_TAG, "GameActivity.class: (processAnswer) Calculated answer (Session singleton) " + game.getCalculatedAnswer());
 
         etxtNumberAnswer.setText("");
         etxtNumberAnswer.setVisibility(View.INVISIBLE);
 
-        if(Session.getInstance().getUserAnswer() == Session.getInstance().getCalculatedAnswer()) {
+        if(game.getUserAnswer() == game.getCalculatedAnswer()) {
 
             // correct
-            txtQuestion.setText(String.format(getString(R.string._correctanswer), Session.getInstance().getUserAnswer()));
-            correctAnswerStreak++;
-            userScore += CORRECT_ANSWER;
+            txtQuestion.setText(String.format(getString(R.string._correctanswer), game.getUserAnswer()));
+            game.incrementCorrectAnswerStreak();
+            game.incrementUserScore(CORRECT_ANSWER);
 
             updateScoreBoard();
 
-            if(correctAnswerStreak == STREAK){
+            if(game.getCorrectAnswerStreak() == STREAK){
 
-                userLives++; // extra life with 10 good answers
-                correctAnswerStreak = 0;
-                userStreaks++;
-                userScore += (userStreaks * STREAK_BONUS); // bonus with 10 good answers
+                game.incrementUserLives(); // extra life with 10 good answers
+                game.setCorrectAnswerStreak(0);
+                game.incrementUserStreaks();
+                game.incrementUserScore(game.getUserStreaks() * STREAK_BONUS); // bonus with 10 good answers
 
                 InputMethodManager imm = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE); // hide keyboard first
                 imm.hideSoftInputFromWindow(etxtNumberAnswer.getWindowToken(), 0);
 
-                AlertDialog dlg = DialogWrapper.getStreakMessageDialog(GameActivity.this, userStreaks);
+                AlertDialog dlg = DialogWrapper.getStreakMessageDialog(GameActivity.this, game.getUserStreaks());
                 dlg.show();
 
             }
 
-            Log.d(LOG_TAG, "GameActivity.class: (processAnswer) Correct answer. Streakcounter is set to " + correctAnswerStreak);
+            Log.d(LOG_TAG, "GameActivity.class: (processAnswer) Correct answer. Streakcounter is set to " + game.getCorrectAnswerStreak());
 
         } else {
             // wrong, no points, streak is gone
@@ -362,9 +360,9 @@ public class GameActivity extends AppCompatActivity implements IGameConstants, I
         btnOk = findViewById(R.id.btnOk);
         btnNext = findViewById(R.id.btnNext);
 
-        userLives = NUM_LIVES;
-        userScore = 0;
-        correctAnswerStreak = 0;
+        game.setUserLives(NUM_LIVES);
+        game.setUserScore(0);
+        game.setCorrectAnswerStreak(0);
 
         etxtNumberAnswer.setVisibility(View.INVISIBLE);
         txtQuestion.setText(R.string._hitfirstquestion);
@@ -379,10 +377,10 @@ public class GameActivity extends AppCompatActivity implements IGameConstants, I
 
         switch(displayText){
             case 1:
-                txtQuestion.setText(String.format(getString(R.string._wronganswer), Session.getInstance().getUserAnswer(), Session.getInstance().getCalculatedAnswer()));
+                txtQuestion.setText(String.format(getString(R.string._wronganswer), game.getUserAnswer(), game.getCalculatedAnswer()));
                 break;
             case 2:
-                txtQuestion.setText(String.format(getString(R.string._nonnumerical), Session.getInstance().getUserAnswer()));
+                txtQuestion.setText(String.format(getString(R.string._nonnumerical), game.getUserAnswer()));
                 break;
             case 3:
                 txtQuestion.setText(R.string._snailpace);
@@ -396,24 +394,24 @@ public class GameActivity extends AppCompatActivity implements IGameConstants, I
 
         pauseTimer();
 
-        userLives--;
-        correctAnswerStreak = 0;
+        game.decreaseUserLives();
+        game.setCorrectAnswerStreak(0);
 
-        txtLife.setText(String.valueOf(userLives));
-        txtStreak.setText(String.valueOf(correctAnswerStreak));
+        txtLife.setText(String.valueOf(game.getUserLives()));
+        txtStreak.setText(String.valueOf(game.getCorrectAnswerStreak()));
 
         // if userLives = 0 then game over...
-        if(userLives == 0){
+        if(game.getUserLives() == 0){
             txtQuestion.setText("");
-            startResult(userScore, userTime, userStreaks);
+            startResult(game.getUserScore(), game.getUserTime(), game.getUserStreaks());
         }
 
     }
 
     private void updateScoreBoard(){
-        txtLife.setText(String.valueOf(userLives));
-        txtStreak.setText(String.valueOf(correctAnswerStreak));
-        txtScore.setText(String.valueOf(userScore));
+        txtLife.setText(String.valueOf(game.getUserLives()));
+        txtStreak.setText(String.valueOf(game.getCorrectAnswerStreak()));
+        txtScore.setText(String.valueOf(game.getUserScore()));
     }
 
     @Override
@@ -421,12 +419,11 @@ public class GameActivity extends AppCompatActivity implements IGameConstants, I
         Log.d(LOG_TAG, "GameActivity.class: (launchSoftKeyBoard) Streak completed, dialog was closed. Launch soft keyboard");
         lLaunchSoftKeyboard = true;
         updateScoreBoard();
-
     }
 
     private void setupLogo(){
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setLogo(R.drawable.mt_logo_padding);
+        getSupportActionBar().setLogo(R.drawable.mt_logo_padding_game);
         getSupportActionBar().setTitle(getString(R.string._appname));
         getSupportActionBar().setSubtitle(getString(R.string._humancalculator));
         getSupportActionBar().setDisplayUseLogoEnabled(true);
@@ -435,6 +432,135 @@ public class GameActivity extends AppCompatActivity implements IGameConstants, I
     @Override
     public void exitGame() {
         pauseTimer();
-        startResult(userScore, userTime, userStreaks);
+        startResult(game.getUserScore(), game.getUserTime(), game.getUserStreaks());
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        // hide keyboard
+        InputMethodManager imm = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(etxtNumberAnswer.getWindowToken(), 0);
+
+        // first parameter = from, second parameter what to start
+        Intent i = new Intent(GameActivity.this, MainActivity.class);
+
+        Log.d(LOG_TAG, "GameActivity.class: (onBackPressed) Restarting main intent");
+
+        try {
+            startActivity(i); // run it
+            finish(); // close this one
+        } catch (Exception e){
+            Log.d(LOG_TAG, "GameActivity.class: (onBackPressed) --> " + e.getMessage());
+        }
+    }
+
+    private class Game{
+
+        private int userAnswer;
+        private int calculatedAnswer;
+        private int userScore;
+        private int userTime;
+        private int userLives;
+        private int userStreaks;
+        private int correctAnswerStreak; // 10 = extra life
+
+        public Game() {
+            initGame();
+        }
+
+        public int getUserAnswer() {
+            return userAnswer;
+        }
+
+        public void setUserAnswer(int userAnswer) {
+            this.userAnswer = userAnswer;
+        }
+
+        public int getCalculatedAnswer() {
+            return calculatedAnswer;
+        }
+
+        public void setCalculatedAnswer(int calculatedAnswer) {
+            this.calculatedAnswer = calculatedAnswer;
+        }
+
+        public int getUserScore() {
+            return userScore;
+        }
+
+        public void setUserScore(int userScore) {
+            this.userScore = userScore;
+        }
+
+        public void incrementUserScore(int userScore) {
+            this.userScore += userScore;
+        }
+
+        public int getUserTime() {
+            return userTime;
+        }
+
+        public void incrementUserTime(int userTime) {
+            this.userTime += userTime;
+        }
+
+        public int getUserLives() {
+            return userLives;
+        }
+
+        public void setUserLives(int userLives) {
+            this.userLives = userLives;
+        }
+
+        public void incrementUserLives() {
+            this.userLives++;
+        }
+
+        public void decreaseUserLives() {
+            this.userLives--;
+        }
+        public int getUserStreaks() {
+            return userStreaks;
+        }
+
+        public void incrementUserStreaks() {
+            this.userStreaks++;
+        }
+
+        public int getCorrectAnswerStreak() {
+            return correctAnswerStreak;
+        }
+
+        public void setCorrectAnswerStreak(int correctAnswerStreak) {
+            this.correctAnswerStreak = correctAnswerStreak;
+        }
+
+        public void incrementCorrectAnswerStreak() {
+            this.correctAnswerStreak++;
+        }
+
+        @Override
+        public String toString() {
+            return "Game{" +
+                    "userAnswer=" + userAnswer +
+                    ", calculatedAnswer=" + calculatedAnswer +
+                    ", userScore=" + userScore +
+                    ", userTime=" + userTime +
+                    ", userLives=" + userLives +
+                    ", userStreaks=" + userStreaks +
+                    ", correctAnswerStreak=" + correctAnswerStreak +
+                    '}';
+        }
+
+        private void initGame(){
+            userAnswer=0;
+            calculatedAnswer=0;
+            userScore = 0;
+            userStreaks = 0;
+            userTime = 0;
+            correctAnswerStreak = 0;
+        }
+
     }
 }
