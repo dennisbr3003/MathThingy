@@ -46,7 +46,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="110dp"
         android:layout_marginTop="18dp"
-        android:text="Exit?"
+        android:text="@string/_exit"
         android:textAlignment="center"
         android:textColor="@color/WhiteSmoke"
         android:textSize="16sp"

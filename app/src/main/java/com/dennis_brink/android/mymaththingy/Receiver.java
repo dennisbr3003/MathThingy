@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-public class Receiver extends BroadcastReceiver implements IGameConstants{
+public class Receiver extends BroadcastReceiver implements IGameConstants, ILogConstants {
 
     private IHighScoreDialogListener highScoreDialogListener;
     private IHighScoreDeleteListener highScoreDeleteListener;
@@ -26,12 +26,12 @@ public class Receiver extends BroadcastReceiver implements IGameConstants{
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        Log.d("DENNIS_B", "Receiver.class: (onReceive) Receiver reached with action " + intent.getAction());
+        Log.d(LOG_TAG, "Receiver.class: (onReceive) Receiver reached with action " + intent.getAction());
 
         if(intent.getAction().equals(HIGHSCORE_ACTION)) {
 
-            Log.d("DENNIS_B", "Receiver.class: (onReceive) High score name received " + intent.getStringExtra(HIGHSCORE_ACTION));
-            Log.d("DENNIS_B", "Receiver.class: (onReceive) High score key received " + intent.getStringExtra(HIGHSCORE_KEY));
+            Log.d(LOG_TAG, "Receiver.class: (onReceive) High score name received " + intent.getStringExtra(HIGHSCORE_ACTION));
+            Log.d(LOG_TAG, "Receiver.class: (onReceive) High score key received " + intent.getStringExtra(HIGHSCORE_KEY));
 
             if (highScoreDialogListener != null) {
                 highScoreDialogListener.processHighScoreName(intent.getStringExtra(HIGHSCORE_ACTION), intent.getStringExtra(HIGHSCORE_KEY));

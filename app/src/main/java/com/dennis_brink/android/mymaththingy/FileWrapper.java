@@ -13,13 +13,13 @@ import java.util.ArrayList;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class FileWrapper {
+public class FileWrapper implements ILogConstants {
 
     private static final String FILENAME = "highscore.hsc";
 
     public static void writeData(Set<HighScore.HighScoreEntry> highScoreEntrySet, Context context){
 
-        Log.d("DENNIS_B", "FileWrapper.class: (writeData) Start");
+        Log.d(LOG_TAG, "FileWrapper.class: (writeData) Start");
 
         try {
             FileOutputStream fos = context.openFileOutput(FILENAME, Context.MODE_PRIVATE);
@@ -33,7 +33,7 @@ public class FileWrapper {
 
     public static Set<HighScore.HighScoreEntry> readData(Context context){
 
-        Log.d("DENNIS_B", "FileWrapper.class: (readData) Start");
+        Log.d(LOG_TAG, "FileWrapper.class: (readData) Start");
 
         Set<HighScore.HighScoreEntry> highScoreEntrySet = null;
         try {
@@ -41,10 +41,10 @@ public class FileWrapper {
             ObjectInputStream ois = new ObjectInputStream(fis);
             highScoreEntrySet = (Set<HighScore.HighScoreEntry>) ois.readObject();
 
-            Log.d("DENNIS_B", "FileWrapper.class: (readData) High score file is a valid object " + (highScoreEntrySet != null));
+            Log.d(LOG_TAG, "FileWrapper.class: (readData) High score file is a valid object " + (highScoreEntrySet != null));
 
         } catch (FileNotFoundException e) {
-            Log.d("DENNIS_B", "FileWrapper.class: (readData) No high score file found, return empty TreeSet instance");
+            Log.d(LOG_TAG, "FileWrapper.class: (readData) No high score file found, return empty TreeSet instance");
             // let's not return null here. The first time the app is run
             // there will be no data file and no entries. This will cause
             // this exception and the return of a null object (X)
@@ -59,6 +59,6 @@ public class FileWrapper {
     }
 
     private static void logError(Exception e){
-        Log.d("DENNIS_B", "FileWrapper.class: (logError) --> " + e.getMessage());
+        Log.d(LOG_TAG, "FileWrapper.class: (logError) --> " + e.getMessage());
     }
 }

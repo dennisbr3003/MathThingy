@@ -10,12 +10,11 @@
     tools:context=".ResultActivity">
 
     <TextView
-        android:id="@+id/txtLblCongratulations"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:gravity="center_horizontal"
-        android:text="Congratulations!"
+        android:text="@string/_congratulations"
         android:textColor="@color/WhiteSmoke"
         android:textSize="24sp"
         android:textStyle="bold" />
@@ -26,16 +25,16 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
         android:gravity="center_horizontal"
-        android:text="score"
+        android:text="@string/_score"
         android:textColor="@color/WhiteSmoke"
         android:textSize="20sp"
         android:textStyle="bold" />
 
     <ImageView
-        android:id="@+id/imageCircularView"
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:layout_marginBottom="0dp"
+        android:contentDescription="@string/_cheeringchildren"
         app:srcCompat="@drawable/festive" />
 
     <LinearLayout
@@ -52,7 +51,8 @@
             android:layout_marginRight="20dp"
             android:layout_weight="1"
             android:backgroundTint="@android:color/holo_blue_dark"
-            android:text="play again" />
+            android:text="@string/_playagain"
+            tools:ignore="TextContrastCheck" />
 
         <Button
             android:id="@+id/btnClose"
@@ -63,7 +63,8 @@
             android:layout_marginRight="20dp"
             android:layout_weight="1"
             android:backgroundTint="@android:color/holo_blue_dark"
-            android:text="close" />
+            android:text="@string/_close"
+            tools:ignore="TextContrastCheck" />
 
     </LinearLayout>
 

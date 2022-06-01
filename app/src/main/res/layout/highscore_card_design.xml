@@ -30,11 +30,12 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="10dp"
-                android:text="TextView"
+                android:text="@string/_textview"
                 android:textSize="12sp"
                 app:layout_constraintEnd_toStartOf="@+id/txtLblHighScoreTime"
                 app:layout_constraintStart_toEndOf="@+id/imageRank"
-                app:layout_constraintTop_toBottomOf="@+id/textViewHighScoreName" />
+                app:layout_constraintTop_toBottomOf="@+id/textViewHighScoreName"
+                tools:ignore="TextContrastCheck" />
 
             <TextView
                 android:id="@+id/textViewHighScoreName"
@@ -44,7 +45,7 @@
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="30dp"
                 android:layout_marginBottom="5dp"
-                android:text="TextView"
+                android:text="@string/_textview"
                 android:textColor="@color/black"
                 android:textSize="20sp"
                 android:textStyle="bold"
@@ -60,10 +61,12 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="17dp"
+                android:contentDescription="@string/_check"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/check" />
+                app:srcCompat="@drawable/check"
+                tools:ignore="ImageContrastCheck" />
 
             <TextView
                 android:id="@+id/txtHighScore"
@@ -71,13 +74,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="7dp"
                 android:layout_marginEnd="29dp"
-                android:text="0"
+                android:text="@string/_0"
                 android:textAlignment="textEnd"
                 android:textColor="@color/ForestGreen"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toTopOf="@+id/txtHighScoreStreaks"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="TextContrastCheck" />
 
             <TextView
                 android:id="@+id/txtHighScoreTime"
@@ -86,13 +90,14 @@
                 android:layout_marginTop="2dp"
                 android:layout_marginEnd="29dp"
                 android:layout_marginBottom="10dp"
-                android:text="0"
+                android:text="@string/_0"
                 android:textAlignment="textEnd"
                 android:textColor="@color/Chocolate"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/txtHighScoreStreaks" />
+                app:layout_constraintTop_toBottomOf="@+id/txtHighScoreStreaks"
+                tools:ignore="TextContrastCheck" />
 
             <TextView
                 android:id="@+id/txtHighScoreStreaks"
@@ -100,7 +105,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:layout_marginEnd="29dp"
-                android:text="0"
+                android:text="@string/_0"
                 android:textAlignment="textEnd"
                 android:textColor="@color/BlueViolet"
                 android:textStyle="bold"
@@ -114,7 +119,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="7dp"
                 android:layout_marginEnd="2dp"
-                android:text="Score"
+                android:text="@string/_scorecaps"
                 android:textColor="@color/black"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toTopOf="@+id/txtLblHighScoreStreaks"
@@ -127,7 +132,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:layout_marginEnd="2dp"
-                android:text="Streaks"
+                android:text="@string/_streaks"
                 android:textColor="@color/black"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toTopOf="@+id/txtLblHighScoreTime"
@@ -141,7 +146,7 @@
                 android:layout_marginTop="2dp"
                 android:layout_marginEnd="2dp"
                 android:layout_marginBottom="10dp"
-                android:text="Seconds"
+                android:text="@string/_seconds"
                 android:textColor="@color/black"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"

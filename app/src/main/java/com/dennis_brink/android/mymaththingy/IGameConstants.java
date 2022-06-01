@@ -33,4 +33,5 @@ public interface IGameConstants {
 
     String LAYOUT_CONFIRM_DELETE = "confirm_delete";
     String LAYOUT_CONFIRM_EXIT = "confirm_exit";
+
 }

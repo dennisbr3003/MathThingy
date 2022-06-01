@@ -11,7 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
-public class MainActivity extends AppCompatActivity implements IGameConstants {
+public class MainActivity extends AppCompatActivity implements IGameConstants, ILogConstants {
 
     Button btnAdd;
     Button btnSub;
@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity implements IGameConstants {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Log.d("DENNIS_B", "MainActivity.class: (onCreate) Start Math Thingy");
+        Log.d(LOG_TAG, "MainActivity.class: (onCreate) Start Math Thingy");
 
         setContentView(R.layout.activity_main);
 
