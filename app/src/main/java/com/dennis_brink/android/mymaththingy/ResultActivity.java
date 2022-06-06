@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -146,6 +147,11 @@ public class ResultActivity extends AppCompatActivity implements IGameConstants,
             Log.d(LOG_TAG, "ResultActivity.class: (processHighScoreName) --> " + e.getMessage());
         }
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        // override and do nothing, user should use the buttons
     }
 
     @SuppressLint("RestrictedApi")
