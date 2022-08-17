@@ -56,14 +56,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.HighSc
         } catch (Exception e){
             Log.d(LOG_TAG, "RecyclerAdapter.class: (onBindViewHolder) --> " + e.getMessage());
         }
-/*
-        holder.cardView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(context,String.format("You selected the flag of %s ?", holder.textViewCountryName.getText().toString()), Toast.LENGTH_SHORT).show();
-            }
-        });
- */
+
     }
 
     @Override
