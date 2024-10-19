@@ -84,4 +84,4 @@ lint/outputs/
 lint/tmp/
 # lint/reports/
 
-./assets/datasource.config.json
+*.config.json
