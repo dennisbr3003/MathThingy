@@ -1,11 +1,14 @@
 package com.dennis_brink.android.mymaththingy;
 
+import android.content.Context;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -120,6 +123,7 @@ public class HighScoreActivity extends AppCompatActivity implements IGameConstan
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     @Override
     protected void onResume() {
         super.onResume();
@@ -128,7 +132,7 @@ public class HighScoreActivity extends AppCompatActivity implements IGameConstan
             receiver = new Receiver();
             receiver.setHighScoreDeleteDialogListener(this);
         }
-        this.registerReceiver(receiver, getFilter());
+        this.registerReceiver(receiver, getFilter(), Context.RECEIVER_EXPORTED);
     }
 
     private void setupLogo(){

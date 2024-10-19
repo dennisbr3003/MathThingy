@@ -48,4 +48,15 @@
     <string name="_streaks">Streaks</string>
     <string name="_check">check</string>
     <string name="_favoperator">Pick your game here!</string>
+    <string name="send">Send</string>
+    <string name="cloud">cloud</string>
+    <string name="tab_to_resume">(Tab to resume)</string>
+    <string name="tab_to_pause">(Tab to pause)</string>
+    <string name="registration_failure">Registration failure</string>
+    <string name="registration_successful">Registration successful</string>
+    <string name="countdown_initialtext">---</string>
+    <string name="returning_in">Returning in</string>
+    <string name="some_message">Some message</string>
+    <string name="dummy_text">dummy text</string>
+    <string name="_profile">Profile</string>
 </resources>

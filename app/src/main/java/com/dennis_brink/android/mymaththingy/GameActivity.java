@@ -337,6 +337,7 @@ public class GameActivity extends AppCompatActivity implements IGameConstants, I
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     @Override
     protected void onResume() {
         super.onResume();
@@ -345,7 +346,7 @@ public class GameActivity extends AppCompatActivity implements IGameConstants, I
             receiver = new Receiver();
             receiver.setGameActivityListener(this);
         }
-        this.registerReceiver(receiver, getFilter());
+        this.registerReceiver(receiver, getFilter(), Context.RECEIVER_EXPORTED);
     }
 
     private void initGameValues(){

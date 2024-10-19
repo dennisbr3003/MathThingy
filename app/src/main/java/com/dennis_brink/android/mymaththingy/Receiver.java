@@ -5,11 +5,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-public class Receiver extends BroadcastReceiver implements IGameConstants, ILogConstants {
+public class Receiver extends BroadcastReceiver implements IGameConstants, ILogConstants, IRegistrationConstants {
 
     private IHighScoreDialogListener highScoreDialogListener;
     private IHighScoreDeleteListener highScoreDeleteListener;
     private IGameActivityListener gameActivityListener;
+    private IRegisterActivityListener registerActivityListener;
+
+    public void setRegisterActivityListener(IRegisterActivityListener registerActivityListener){
+        this.registerActivityListener = registerActivityListener;
+    }
 
     public void setHighScoreDialogListener(IHighScoreDialogListener highScoreDialogListener){
         this.highScoreDialogListener = highScoreDialogListener;
@@ -53,6 +58,30 @@ public class Receiver extends BroadcastReceiver implements IGameConstants, ILogC
         if(intent.getAction().equals(EXIT_GAME_ACTION)) {
             if (gameActivityListener != null) {
                 gameActivityListener.exitGame();
+            }
+        }
+
+        if(intent.getAction().equals(ONLINE_REGISTRATION_FAILURE)) {
+            if (registerActivityListener != null) {
+                registerActivityListener.onlineRegistrationFailure(intent.getStringExtra("MSG"));
+            }
+        }
+
+        if(intent.getAction().equals(ONLINE_REGISTRATION_SUCCESS)) {
+            if (registerActivityListener != null) {
+                registerActivityListener.onlineRegistrationSuccess();
+            }
+        }
+
+        if(intent.getAction().equals(LOCAL_REGISTRATION_FAILURE)) {
+            if (registerActivityListener != null) {
+                registerActivityListener.localRegistrationFailure(intent.getStringExtra("MSG"));
+            }
+        }
+
+        if(intent.getAction().equals(LOCAL_REGISTRATION_SUCCESS)) {
+            if (registerActivityListener != null) {
+                registerActivityListener.localRegistrationSuccess();
             }
         }
 

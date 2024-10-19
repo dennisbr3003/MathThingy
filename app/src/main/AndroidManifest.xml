@@ -1,14 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.dennis_brink.android.mymaththingy">
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/math_thingy"
+        android:icon="@drawable/game_icon_v3"
         android:label="@string/_appname"
-        android:roundIcon="@drawable/math_thingy"
+        android:roundIcon="@drawable/game_icon_v3"
         android:supportsRtl="true"
-        android:theme="@style/Theme.MyMathThingy">
+        android:theme="@style/Theme.MyMathThingy"
+        android:usesCleartextTraffic="true"
+        tools:targetApi="31">
+        <activity
+            android:name=".RegisterActivity"
+            android:screenOrientation="portrait"
+            android:exported="false" />
         <activity
             android:name=".HighScoreActivity"
             android:exported="false"
