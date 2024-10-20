@@ -1,8 +1,9 @@
-package com.dennis_brink.android.mymaththingy;
+package com.dennis_brink.android.mymaththingy.registration;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,9 +12,13 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.fragment.app.Fragment;
 
+import com.dennis_brink.android.mymaththingy.R;
+
 import java.util.Locale;
+import java.util.Objects;
 
 public class ResultFragment extends Fragment {
 
@@ -24,7 +29,7 @@ public class ResultFragment extends Fragment {
     CountDownTimer countDownTimer;
     long time_left_in_millis = 5000;
     Boolean timerIsRunning = false;
-
+    Boolean BackIsPressed = true;
     RelativeLayout rl;
     static int progressBarMaxValue = 5;
     ProgressBar progressBar;
@@ -57,7 +62,7 @@ public class ResultFragment extends Fragment {
         progressBar.setMax(progressBarMaxValue);
         progressBar.setProgress(progressBarMaxValue);
 
-        Intent i = getActivity().getIntent();
+        Intent i = requireActivity().getIntent();
         onlineRegistration = i.getBooleanExtra("ONLINE_REGISTRATION", false);
 
         if(onlineRegistration) {
@@ -80,6 +85,19 @@ public class ResultFragment extends Fragment {
             }
         });
 
+        // needed when you press back and the timer is not finished we have to stop the timer from
+        // running in the background and executing an automated back press, this would close the app
+        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(BackIsPressed) {
+            @Override
+            public void handleOnBackPressed() {
+                // custom stuff here
+                countDownTimer.cancel(); // this will stop the countdown
+                countDownTimer = null; // this kills your timer definitely
+                // activity stuff here
+                requireActivity().finish(); // invoking back press proved unstable
+            }
+        });
+
         // start countdown timer (5 sec)
         startTimer();
         return v;
@@ -87,7 +105,7 @@ public class ResultFragment extends Fragment {
 
     public void startTimer(){
 
-        countDownTimer = new CountDownTimer(time_left_in_millis, 1000) { // every second
+        countDownTimer = new CountDownTimer(time_left_in_millis, 1000) { // every  second
 
             @Override
             public void onTick(long millisUntilFinished) {
@@ -97,12 +115,12 @@ public class ResultFragment extends Fragment {
 
             @Override
             public void onFinish() {
-                // same as wrong answer
                 timerIsRunning = false;
                 pauseTimer();
                 updateTimerText();
                 // press back programmatically (method available to activity, not to fragment)
-                requireActivity().getOnBackPressedDispatcher().onBackPressed();
+                // requireActivity().getOnBackPressedDispatcher().onBackPressed(); // unstable
+                requireActivity().finish();
             }
 
         }.start();
@@ -110,6 +128,7 @@ public class ResultFragment extends Fragment {
     }
 
     public void updateTimerText(){
+        // Log.d("DENNIS_B", "Timer: (mod 1000)" + time_left_in_millis + " " + time_left_in_millis%1000);
         int second = (int)(time_left_in_millis / 1000);
         tvTime.setText(String.format(Locale.getDefault(), "%02d", second));
         progressBar.setProgress(second, true);
@@ -119,5 +138,7 @@ public class ResultFragment extends Fragment {
         if(countDownTimer != null) { countDownTimer.cancel(); }
         timerIsRunning = false;
     }
+
+
 
 }

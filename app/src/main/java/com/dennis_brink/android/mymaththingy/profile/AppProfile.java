@@ -1,7 +1,9 @@
-package com.dennis_brink.android.mymaththingy;
+package com.dennis_brink.android.mymaththingy.profile;
 
 import android.app.Application;
-import android.util.Log;
+
+import com.dennis_brink.android.mymaththingy.AppContext;
+import com.dennis_brink.android.mymaththingy.ILogConstants;
 
 public class AppProfile extends Application implements ILogConstants {
 
@@ -36,6 +38,11 @@ public class AppProfile extends Application implements ILogConstants {
 
     public void reloadProfile() {
         initGameProfile();
+    }
+
+    public void saveGameProfile() {
+        FileHelper.writeData(gameProfile, AppContext.getContext());
+        reloadProfile();
     }
 
 }

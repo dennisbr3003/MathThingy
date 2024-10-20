@@ -5,7 +5,7 @@
     android:id="@+id/frameLayoutProgress"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ProgressFragment">
+    tools:context=".registration.ProgressFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

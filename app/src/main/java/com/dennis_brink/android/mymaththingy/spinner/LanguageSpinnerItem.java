@@ -1,4 +1,4 @@
-package com.dennis_brink.android.mymaththingy;
+package com.dennis_brink.android.mymaththingy.spinner;
 
 public class LanguageSpinnerItem {
 

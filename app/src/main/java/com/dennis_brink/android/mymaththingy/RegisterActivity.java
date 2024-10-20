@@ -17,6 +17,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
 
+import com.dennis_brink.android.mymaththingy.profile.AppProfile;
+import com.dennis_brink.android.mymaththingy.profile.GameProfile;
+import com.dennis_brink.android.mymaththingy.registration.FormFragment;
+import com.dennis_brink.android.mymaththingy.registration.ResultFragment;
+
 import java.util.Objects;
 
 public class RegisterActivity extends AppCompatActivity implements IRegisterActivityListener, IRegistrationConstants {
@@ -32,9 +37,8 @@ public class RegisterActivity extends AppCompatActivity implements IRegisterActi
 
         setupLogo();
 
-        Intent i = RegisterActivity.this.getIntent();
-        config = (GameProfile) i.getSerializableExtra("CONFIG");
-        Log.d("DB1", "RegisterActivity.onCreate(): " + config.toString());
+        //Intent i = RegisterActivity.this.getIntent();
+        //config = (GameProfile) i.getSerializableExtra("CONFIG");
 
         fragmentManager.beginTransaction()
                 .add(R.id.fragmentContainerView, FormFragment.class, null)
@@ -54,7 +58,6 @@ public class RegisterActivity extends AppCompatActivity implements IRegisterActi
     protected void onPause() {
         super.onPause();
         if (receiver != null){
-            Log.d("DB1", "RegisterActivity.onPause(): Unregistering receiver");
             this.unregisterReceiver(receiver);
             receiver = null;
         }
@@ -66,7 +69,6 @@ public class RegisterActivity extends AppCompatActivity implements IRegisterActi
         super.onResume();
         try {
             if (receiver == null) {
-                Log.d("DB1", "RegisterActivity.onResume(): Registering receiver");
                 receiver = new Receiver();
                 receiver.setRegisterActivityListener(this);
             }
@@ -78,14 +80,14 @@ public class RegisterActivity extends AppCompatActivity implements IRegisterActi
 
     @Override
     public void onlineRegistrationSuccess() {
-        Log.d("DB1", "Registration success, stop spinner, switch fragment to result + success");
 
         Intent i = getIntent();
         i.putExtra("ONLINE_REGISTRATION", true);
 
-        // TODO set GameProfile.registered to true
-        config.setRegistered(true);
-        FileHelper.writeData(config, RegisterActivity.this);
+        // config.setRegistered(true);
+        // FileHelper.writeData(config, RegisterActivity.this);
+        AppProfile.getInstance().getGameProfile().setRegistered(true);
+        AppProfile.getInstance().saveGameProfile();
 
         fragmentManager.beginTransaction()
                 .replace(R.id.fragmentContainerView, ResultFragment.class, null)
@@ -141,10 +143,10 @@ public class RegisterActivity extends AppCompatActivity implements IRegisterActi
         View v = infl.inflate(R.layout.actionbar, null);
 
         TextView tvActionBarMainTitle = v.findViewById(R.id.tvActionBarMainTitle);
-        tvActionBarMainTitle.setText("Game Profile");
+        tvActionBarMainTitle.setText(R.string._gameprofile);
         tvActionBarMainTitle.setTextColor(getColor(R.color.white));
         TextView tvActionBarSubTitle = v.findViewById(R.id.tvActionBarSubTitle);
-        tvActionBarSubTitle.setText("Setup your game profile...");
+        tvActionBarSubTitle.setText(R.string._setupprofile);
         tvActionBarSubTitle.setTextColor(getColor(R.color.white));
         ImageView ivActionBarActionIcon = v.findViewById(R.id.ivActionBarActionIcon);
 

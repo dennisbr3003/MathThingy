@@ -63,4 +63,8 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="_gamemenu">Game Menu</string>
     <string name="_selectdifficulty">Select your difficulty here...</string>
+    <string name="_gameprofile">Game Profile</string>
+    <string name="_setupprofile">Setup your game profile...</string>
+    <string name="_notregistered">Curently you are NOT registered online and you DO NOT compete in the global competition</string>
+    <string name="_registered">Curently you are registered online and you compete in the global competition</string>
 </resources>

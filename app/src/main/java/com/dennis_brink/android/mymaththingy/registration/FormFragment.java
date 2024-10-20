@@ -1,4 +1,4 @@
-package com.dennis_brink.android.mymaththingy;
+package com.dennis_brink.android.mymaththingy.registration;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,6 +17,13 @@ import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import com.dennis_brink.android.mymaththingy.AppContext;
+import com.dennis_brink.android.mymaththingy.profile.AppProfile;
+import com.dennis_brink.android.mymaththingy.spinner.CustomAdapter;
+import com.dennis_brink.android.mymaththingy.IRegistrationConstants;
+import com.dennis_brink.android.mymaththingy.spinner.LanguageSpinnerItem;
+import com.dennis_brink.android.mymaththingy.R;
+import com.dennis_brink.android.mymaththingy.WebClient;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.util.ArrayList;
@@ -29,7 +36,7 @@ public class FormFragment extends Fragment implements AdapterView.OnItemSelected
     CheckBox cbUpsertOnline;
     TextView tvOnlineState;
     Spinner spin;
-    GameProfile gameProfile;
+    // GameProfile gameProfile;
     ArrayList<LanguageSpinnerItem> languageSpinnerItemArrayList;
     private Runnable runnable;
     private Handler handler;
@@ -48,10 +55,10 @@ public class FormFragment extends Fragment implements AdapterView.OnItemSelected
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_form, container, false);
 
-        Intent i = requireActivity().getIntent();
-        gameProfile = (GameProfile) i.getSerializableExtra("CONFIG");
+        //Intent i = requireActivity().getIntent();
+        //gameProfile = (GameProfile) i.getSerializableExtra("CONFIG");
 
-        webClient = new WebClient(getActivity());
+        webClient = new WebClient(AppContext.getContext());
         webClient.initWebClient();
 
         btnRegisterNow = v.findViewById(R.id.btnRegisterNow);
@@ -61,7 +68,8 @@ public class FormFragment extends Fragment implements AdapterView.OnItemSelected
         etCallSign = v.findViewById(R.id.etCallSign);
         etEmailAddress = v.findViewById(R.id.etEmailAddress);
 
-        Spinner spin = v.findViewById(R.id.spinLanguage);
+        // Spinner
+        spin = v.findViewById(R.id.spinLanguage);
         spin.setOnItemSelectedListener(this);
 
         // fill spinner item array list
@@ -74,26 +82,21 @@ public class FormFragment extends Fragment implements AdapterView.OnItemSelected
         // set spinner to saved item
         AtomicInteger idx = new AtomicInteger(0);
         languageSpinnerItemArrayList.forEach((languageSpinnerItem) -> {
-            if(languageSpinnerItem.getIsoCode().equals(gameProfile.getPlayer().getLanguage())){
+            if(languageSpinnerItem.getIsoCode().equals(AppProfile.getInstance().getPlayer().getLanguage())){
                 spin.setSelection(idx.get(), true);
             }
             idx.getAndIncrement();
         });
 
-        etDisplayName.setText(gameProfile.getPlayer().getDisplayName());
-        etCallSign.setText(gameProfile.getPlayer().getCallSign());
-        etEmailAddress.setText(gameProfile.getPlayer().getEmail());
+        etDisplayName.setText(AppProfile.getInstance().getPlayer().getDisplayName());
+        etCallSign.setText(AppProfile.getInstance().getPlayer().getCallSign());
+        etEmailAddress.setText(AppProfile.getInstance().getPlayer().getEmail());
 
-        cbUpsertOnline.setChecked(gameProfile.isDoUpsertOnline());
-        if(gameProfile.isRegistered())tvOnlineState.setText("Curently you are registered online and you compete in the global competition");
-        else tvOnlineState.setText("Curently you are NOT registered online and you DO NOT compete in the global competition");
+        cbUpsertOnline.setChecked(AppProfile.getInstance().getGameProfile().isDoUpsertOnline());
+        if(AppProfile.getInstance().getGameProfile().isRegistered())tvOnlineState.setText(R.string._registered);
+        else tvOnlineState.setText(R.string._notregistered);
 
-        btnRegisterNow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                saveRegistration();
-            }
-        });
+        btnRegisterNow.setOnClickListener(view -> saveRegistration());
 
         return v;
 
@@ -101,16 +104,19 @@ public class FormFragment extends Fragment implements AdapterView.OnItemSelected
 
     private void saveRegistration() {
 
-        gameProfile.setDoUpsertOnline(cbUpsertOnline.isChecked()); // save the checkbox value
+        AppProfile.getInstance().getGameProfile().setDoUpsertOnline(cbUpsertOnline.isChecked()); // save the checkbox value
+        LanguageSpinnerItem languageSpinnerItem = (LanguageSpinnerItem) spin.getSelectedItem();
 
-        gameProfile.setConfigValues(
+        AppProfile.getInstance().getGameProfile().setConfigValues(
                 etCallSign.getText().toString(),
                 etDisplayName.getText().toString(),
                 etEmailAddress.getText().toString(),
-                cbUpsertOnline.isChecked()
+                cbUpsertOnline.isChecked(),
+                languageSpinnerItem.getIsoCode()
         );
 
-        FileHelper.writeData(gameProfile, requireActivity());
+        // FileHelper.writeData(gameProfile, requireActivity());
+        AppProfile.getInstance().saveGameProfile();
 
         if(!cbUpsertOnline.isChecked()){
             sendRegistrationSuccess();
@@ -132,7 +138,7 @@ public class FormFragment extends Fragment implements AdapterView.OnItemSelected
         handler = new Handler();
         runnable = () -> {
             try {
-                webClient.savePlayer(gameProfile.getPlayer());
+                webClient.savePlayer(AppProfile.getInstance().getPlayer());
             } catch (JsonProcessingException e) {
                 sendRegistrationFailure( e.getMessage());
             }
@@ -153,7 +159,7 @@ public class FormFragment extends Fragment implements AdapterView.OnItemSelected
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-        gameProfile.setLanguage(languageSpinnerItemArrayList.get(i).getIsoCode());
+        //AppProfile.getInstance().getPlayer().setLanguage(languageSpinnerItemArrayList.get(i).getIsoCode());
     }
 
     @Override

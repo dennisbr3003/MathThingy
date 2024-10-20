@@ -1,4 +1,4 @@
-package com.dennis_brink.android.mymaththingy;
+package com.dennis_brink.android.mymaththingy.profile;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -40,11 +40,12 @@ public class GameProfile implements Serializable {
         return deviceId;
     }
 
-    public void setConfigValues(String callSign, String displayName, String email, boolean goOnline){
+    public void setConfigValues(String callSign, String displayName, String email, boolean goOnline, String language){
         this.callSign = callSign;
         this.displayName = displayName;
         this.email = email;
         this.doUpsertOnline = goOnline;
+        this.language = language;
     }
 
     private void setDeviceId(String diviceId) {

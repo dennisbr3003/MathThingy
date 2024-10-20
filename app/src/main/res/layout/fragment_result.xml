@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:visibility="visible"
-    tools:context=".ResultFragment">
+    tools:context=".registration.ResultFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView
