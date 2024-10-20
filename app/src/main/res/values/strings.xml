@@ -59,4 +59,8 @@
     <string name="some_message">Some message</string>
     <string name="dummy_text">dummy text</string>
     <string name="_profile">Profile</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="_gamemenu">Game Menu</string>
+    <string name="_selectdifficulty">Select your difficulty here...</string>
 </resources>

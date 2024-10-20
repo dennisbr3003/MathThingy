@@ -1,5 +1,6 @@
 package com.dennis_brink.android.mymaththingy;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.provider.Settings.Secure;
 
@@ -12,6 +13,7 @@ public class GameProfile implements Serializable {
     private String deviceId, callSign, displayName, email, language;
     private boolean isRegistered, doUpsertOnline;
 
+    @SuppressLint("HardwareIds")
     public GameProfile(Context context) {
         this.isRegistered = false;
         this.doUpsertOnline = true;
