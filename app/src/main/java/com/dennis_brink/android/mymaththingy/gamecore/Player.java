@@ -1,20 +1,23 @@
-package com.dennis_brink.android.mymaththingy.profile;
+package com.dennis_brink.android.mymaththingy.gamecore;
 
+import android.annotation.SuppressLint;
+import android.provider.Settings;
+import androidx.annotation.NonNull;
+import com.dennis_brink.android.mymaththingy.AppContext;
 import java.io.Serializable;
 
-public class Player implements Serializable {
+// If you use serializable on this class, make sure you also do this on the super
+// https://stackoverflow.com/questions/9747443/java-io-invalidclassexception-no-valid-constructor
+
+public class Player extends DataStructure implements Serializable, IGameCore {
 
     private String deviceId, callSign, displayName, email, language;
 
+    @SuppressLint("HardwareIds")
     public Player() {
-    }
-
-    public Player(String deviceId, String callSign, String displayName, String email, String language) {
-        this.deviceId = deviceId==null?"":deviceId;
-        this.callSign = callSign==null?"":callSign;
-        this.displayName = displayName==null?"":displayName;
-        this.email = email==null?"":email;
-        this.language = language==null||language==""?"EN":language;
+        super(StructureType.PLAYER);
+        this.deviceId = Settings.Secure.getString(AppContext.getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+        this.language = DEFAULT_LANG; // default language
     }
 
     public String getDeviceId() {
@@ -57,6 +60,7 @@ public class Player implements Serializable {
         this.language = language;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "Player{" +

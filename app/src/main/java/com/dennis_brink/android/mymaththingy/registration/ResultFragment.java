@@ -3,7 +3,6 @@ package com.dennis_brink.android.mymaththingy.registration;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,12 +17,10 @@ import androidx.fragment.app.Fragment;
 import com.dennis_brink.android.mymaththingy.R;
 
 import java.util.Locale;
-import java.util.Objects;
 
 public class ResultFragment extends Fragment {
 
     boolean onlineRegistration;
-
     TextView tvResult, tvMsg, tvTime, tvStatus;
     ImageView ivRegisterResult;
     CountDownTimer countDownTimer;
@@ -128,7 +125,6 @@ public class ResultFragment extends Fragment {
     }
 
     public void updateTimerText(){
-        // Log.d("DENNIS_B", "Timer: (mod 1000)" + time_left_in_millis + " " + time_left_in_millis%1000);
         int second = (int)(time_left_in_millis / 1000);
         tvTime.setText(String.format(Locale.getDefault(), "%02d", second));
         progressBar.setProgress(second, true);
@@ -138,7 +134,4 @@ public class ResultFragment extends Fragment {
         if(countDownTimer != null) { countDownTimer.cancel(); }
         timerIsRunning = false;
     }
-
-
-
 }

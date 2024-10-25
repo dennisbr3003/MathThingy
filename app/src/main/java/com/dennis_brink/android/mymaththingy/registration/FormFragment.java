@@ -18,7 +18,9 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.dennis_brink.android.mymaththingy.AppContext;
-import com.dennis_brink.android.mymaththingy.profile.AppProfile;
+import com.dennis_brink.android.mymaththingy.gamecore.GameCore;
+import com.dennis_brink.android.mymaththingy.gamecore.Player;
+import com.dennis_brink.android.mymaththingy.gamecore.Profile;
 import com.dennis_brink.android.mymaththingy.spinner.CustomAdapter;
 import com.dennis_brink.android.mymaththingy.IRegistrationConstants;
 import com.dennis_brink.android.mymaththingy.spinner.LanguageSpinnerItem;
@@ -36,10 +38,12 @@ public class FormFragment extends Fragment implements AdapterView.OnItemSelected
     CheckBox cbUpsertOnline;
     TextView tvOnlineState;
     Spinner spin;
-    // GameProfile gameProfile;
     ArrayList<LanguageSpinnerItem> languageSpinnerItemArrayList;
     private Runnable runnable;
     private Handler handler;
+    Player player;
+    Profile profile;
+
     public FormFragment() {
         // Required empty public constructor
     }
@@ -52,11 +56,9 @@ public class FormFragment extends Fragment implements AdapterView.OnItemSelected
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_form, container, false);
-
-        //Intent i = requireActivity().getIntent();
-        //gameProfile = (GameProfile) i.getSerializableExtra("CONFIG");
 
         webClient = new WebClient(AppContext.getContext());
         webClient.initWebClient();
@@ -68,32 +70,17 @@ public class FormFragment extends Fragment implements AdapterView.OnItemSelected
         etCallSign = v.findViewById(R.id.etCallSign);
         etEmailAddress = v.findViewById(R.id.etEmailAddress);
 
-        // Spinner
-        spin = v.findViewById(R.id.spinLanguage);
-        spin.setOnItemSelectedListener(this);
+        player = GameCore.getPlayer();
+        profile = GameCore.getProfile();
 
-        // fill spinner item array list
-        createLanguageItemList();
+        initSpinner(v);
 
-        // attach adapter to spinner
-        CustomAdapter customAdapter = new CustomAdapter(requireActivity().getApplicationContext(), languageSpinnerItemArrayList);
-        spin.setAdapter(customAdapter);
+        etDisplayName.setText(player.getDisplayName());
+        etCallSign.setText(player.getCallSign());
+        etEmailAddress.setText(player.getEmail());
 
-        // set spinner to saved item
-        AtomicInteger idx = new AtomicInteger(0);
-        languageSpinnerItemArrayList.forEach((languageSpinnerItem) -> {
-            if(languageSpinnerItem.getIsoCode().equals(AppProfile.getInstance().getPlayer().getLanguage())){
-                spin.setSelection(idx.get(), true);
-            }
-            idx.getAndIncrement();
-        });
-
-        etDisplayName.setText(AppProfile.getInstance().getPlayer().getDisplayName());
-        etCallSign.setText(AppProfile.getInstance().getPlayer().getCallSign());
-        etEmailAddress.setText(AppProfile.getInstance().getPlayer().getEmail());
-
-        cbUpsertOnline.setChecked(AppProfile.getInstance().getGameProfile().isDoUpsertOnline());
-        if(AppProfile.getInstance().getGameProfile().isRegistered())tvOnlineState.setText(R.string._registered);
+        cbUpsertOnline.setChecked(profile.isDoUpsertOnline());
+        if(profile.isRegistered())tvOnlineState.setText(R.string._registered);
         else tvOnlineState.setText(R.string._notregistered);
 
         btnRegisterNow.setOnClickListener(view -> saveRegistration());
@@ -104,19 +91,16 @@ public class FormFragment extends Fragment implements AdapterView.OnItemSelected
 
     private void saveRegistration() {
 
-        AppProfile.getInstance().getGameProfile().setDoUpsertOnline(cbUpsertOnline.isChecked()); // save the checkbox value
         LanguageSpinnerItem languageSpinnerItem = (LanguageSpinnerItem) spin.getSelectedItem();
 
-        AppProfile.getInstance().getGameProfile().setConfigValues(
-                etCallSign.getText().toString(),
-                etDisplayName.getText().toString(),
-                etEmailAddress.getText().toString(),
-                cbUpsertOnline.isChecked(),
-                languageSpinnerItem.getIsoCode()
-        );
+        player.setCallSign(etCallSign.getText().toString());
+        player.setDisplayName(etDisplayName.getText().toString());
+        player.setEmail(etEmailAddress.getText().toString());
+        player.setLanguage(languageSpinnerItem.getIsoCode());
+        GameCore.saveDataStructure(player);
 
-        // FileHelper.writeData(gameProfile, requireActivity());
-        AppProfile.getInstance().saveGameProfile();
+        profile.setDoUpsertOnline(cbUpsertOnline.isChecked());
+        GameCore.saveDataStructure(profile);
 
         if(!cbUpsertOnline.isChecked()){
             sendRegistrationSuccess();
@@ -138,15 +122,12 @@ public class FormFragment extends Fragment implements AdapterView.OnItemSelected
         handler = new Handler();
         runnable = () -> {
             try {
-                webClient.savePlayer(AppProfile.getInstance().getPlayer());
+                webClient.savePlayer(player);
             } catch (JsonProcessingException e) {
                 sendRegistrationFailure( e.getMessage());
             }
         };
         handler.postDelayed(runnable, 1000);
-
-
-
     }
 
     private void createLanguageItemList() {
@@ -159,7 +140,6 @@ public class FormFragment extends Fragment implements AdapterView.OnItemSelected
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-        //AppProfile.getInstance().getPlayer().setLanguage(languageSpinnerItemArrayList.get(i).getIsoCode());
     }
 
     @Override
@@ -179,6 +159,29 @@ public class FormFragment extends Fragment implements AdapterView.OnItemSelected
         i.setAction(LOCAL_REGISTRATION_FAILURE);
         i.putExtra("MSG", msg);
         requireActivity().sendBroadcast(i);
+    }
+
+    private void initSpinner(View v) {
+
+        // Spinner
+        spin = v.findViewById(R.id.spinLanguage);
+        spin.setOnItemSelectedListener(this);
+
+        // fill spinner item array list
+        createLanguageItemList();
+
+        // attach adapter to spinner
+        CustomAdapter customAdapter = new CustomAdapter(AppContext.getContext(), languageSpinnerItemArrayList);
+        spin.setAdapter(customAdapter);
+
+        // set spinner to saved item
+        AtomicInteger idx = new AtomicInteger(0);
+        languageSpinnerItemArrayList.forEach((languageSpinnerItem) -> {
+            if(languageSpinnerItem.getIsoCode().equals(player.getLanguage())) {
+                spin.setSelection(idx.get(), true);
+            }
+            idx.getAndIncrement();
+        });
     }
 
 }

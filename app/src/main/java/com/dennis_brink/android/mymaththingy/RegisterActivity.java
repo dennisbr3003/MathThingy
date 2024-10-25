@@ -17,18 +17,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
 
-import com.dennis_brink.android.mymaththingy.profile.AppProfile;
-import com.dennis_brink.android.mymaththingy.profile.GameProfile;
+import com.dennis_brink.android.mymaththingy.gamecore.GameCore;
+import com.dennis_brink.android.mymaththingy.gamecore.Profile;
 import com.dennis_brink.android.mymaththingy.registration.FormFragment;
 import com.dennis_brink.android.mymaththingy.registration.ResultFragment;
 
 import java.util.Objects;
 
 public class RegisterActivity extends AppCompatActivity implements IRegisterActivityListener, IRegistrationConstants {
-    String deviceId;
-    GameProfile config;
+
     Receiver receiver = null;
     FragmentManager fragmentManager = getSupportFragmentManager();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -36,9 +36,6 @@ public class RegisterActivity extends AppCompatActivity implements IRegisterActi
         setContentView(R.layout.activity_register);
 
         setupLogo();
-
-        //Intent i = RegisterActivity.this.getIntent();
-        //config = (GameProfile) i.getSerializableExtra("CONFIG");
 
         fragmentManager.beginTransaction()
                 .add(R.id.fragmentContainerView, FormFragment.class, null)
@@ -84,10 +81,9 @@ public class RegisterActivity extends AppCompatActivity implements IRegisterActi
         Intent i = getIntent();
         i.putExtra("ONLINE_REGISTRATION", true);
 
-        // config.setRegistered(true);
-        // FileHelper.writeData(config, RegisterActivity.this);
-        AppProfile.getInstance().getGameProfile().setRegistered(true);
-        AppProfile.getInstance().saveGameProfile();
+        Profile profile = GameCore.getProfile();
+        profile.setRegistered(true);
+        GameCore.saveDataStructure(profile);
 
         fragmentManager.beginTransaction()
                 .replace(R.id.fragmentContainerView, ResultFragment.class, null)

@@ -7,7 +7,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.dennis_brink.android.mymaththingy.profile.Player;
+import com.dennis_brink.android.mymaththingy.gamecore.Player;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -78,6 +78,8 @@ public class WebClient implements IRegistrationConstants {
 
         ObjectMapper objectMapper = new ObjectMapper();
         sBody = objectMapper.writeValueAsString(player);
+
+        Log.d("DB1", sBody);
 
         RequestBody body = RequestBody.create(sBody, JSON);
 

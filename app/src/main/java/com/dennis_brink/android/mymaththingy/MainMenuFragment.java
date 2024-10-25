@@ -72,7 +72,6 @@ public class MainMenuFragment extends Fragment implements IGameConstants, ILogCo
 
     private void startRegistration() {
         Intent i = new Intent(AppContext.getContext(), RegisterActivity.class); // from --> to
-        // i.putExtra("CONFIG", AppProfile.getInstance().getGameProfile()); // send this parameter
         startActivity(i); // run it
     }
 
