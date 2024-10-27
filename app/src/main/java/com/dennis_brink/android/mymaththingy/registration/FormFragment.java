@@ -14,10 +14,11 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-import com.dennis_brink.android.mymaththingy.AppContext;
+import com.dennis_brink.android.mymaththingy.gamecore.AppContext;
 import com.dennis_brink.android.mymaththingy.gamecore.GameCore;
 import com.dennis_brink.android.mymaththingy.gamecore.Player;
 import com.dennis_brink.android.mymaththingy.gamecore.Profile;
@@ -35,8 +36,8 @@ public class FormFragment extends Fragment implements AdapterView.OnItemSelected
     WebClient webClient;
     Button btnRegisterNow;
     EditText etDisplayName, etCallSign, etEmailAddress;
-    CheckBox cbUpsertOnline;
-    TextView tvOnlineState;
+    CheckBox cbCompeteOnline;
+    TextView tvCurrentSetting;
     Spinner spin;
     ArrayList<LanguageSpinnerItem> languageSpinnerItemArrayList;
     private Runnable runnable;
@@ -64,29 +65,49 @@ public class FormFragment extends Fragment implements AdapterView.OnItemSelected
         webClient.initWebClient();
 
         btnRegisterNow = v.findViewById(R.id.btnRegisterNow);
-        cbUpsertOnline = v.findViewById(R.id.cbUpsertOnline);
-        tvOnlineState = v.findViewById(R.id.tvOnlineState);
+        cbCompeteOnline = v.findViewById(R.id.cbUpsertOnline);
         etDisplayName = v.findViewById(R.id.etDisplayName);
         etCallSign = v.findViewById(R.id.etCallSign);
         etEmailAddress = v.findViewById(R.id.etEmailAddress);
+        tvCurrentSetting = v.findViewById(R.id.tvCurrentSetting);
 
         player = GameCore.getPlayer();
         profile = GameCore.getProfile();
 
+        setGamePlayModeText();
         initSpinner(v);
 
         etDisplayName.setText(player.getDisplayName());
         etCallSign.setText(player.getCallSign());
         etEmailAddress.setText(player.getEmail());
 
-        cbUpsertOnline.setChecked(profile.isDoUpsertOnline());
-        if(profile.isRegistered())tvOnlineState.setText(R.string._registered);
-        else tvOnlineState.setText(R.string._notregistered);
+        cbCompeteOnline.setChecked(profile.isCompeteOnline());
 
         btnRegisterNow.setOnClickListener(view -> saveRegistration());
 
+        // needed when you press back and the timer is not finished we have to stop the timer from
+        // running in the background and executing an automated back press, this would close the app
+        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                // custom stuff here
+                checkGamePlayMode();
+                GameCore.saveDataStructure(profile);
+                requireActivity().finish(); // invoking back press proved unstable
+            }
+        });
+
         return v;
 
+    }
+
+    private void checkGamePlayMode() {
+        if(player.isEmpty()) {
+            profile.setPlaymode(0); // anonymously
+            profile.setCompeteOnline(false);
+        } else {
+            profile.setPlaymode(1); // locally
+        }
     }
 
     private void saveRegistration() {
@@ -99,10 +120,13 @@ public class FormFragment extends Fragment implements AdapterView.OnItemSelected
         player.setLanguage(languageSpinnerItem.getIsoCode());
         GameCore.saveDataStructure(player);
 
-        profile.setDoUpsertOnline(cbUpsertOnline.isChecked());
+        // no data = anonymously, otherwise you play locally
+        checkGamePlayMode();
+
+        profile.setCompeteOnline(cbCompeteOnline.isChecked());
         GameCore.saveDataStructure(profile);
 
-        if(!cbUpsertOnline.isChecked()){
+        if(!cbCompeteOnline.isChecked()){
             sendRegistrationSuccess();
             return;
         }
@@ -147,18 +171,30 @@ public class FormFragment extends Fragment implements AdapterView.OnItemSelected
     }
 
     private void sendRegistrationSuccess() {
-        Log.d("DB1", "trying to send registration success");
         Intent i = new Intent();
         i.setAction(LOCAL_REGISTRATION_SUCCESS);
         requireActivity().sendBroadcast(i);
     }
 
     private void sendRegistrationFailure(String msg) {
-        Log.d("DB1", "trying to send registration failure");
         Intent i = new Intent();
         i.setAction(LOCAL_REGISTRATION_FAILURE);
         i.putExtra("MSG", msg);
         requireActivity().sendBroadcast(i);
+    }
+
+    private void setGamePlayModeText(){
+        switch(profile.getPlaymode()) {
+            case 0:
+                tvCurrentSetting.setText(getResources().getString(R.string._current_play_mode,ANONYMOUSLY));
+                break;
+            case 1:
+                tvCurrentSetting.setText(getResources().getString(R.string._current_play_mode,LOCALLY));
+                break;
+            case 2:
+                tvCurrentSetting.setText(getResources().getString(R.string._current_play_mode,ONLINE));
+                break;
+        }
     }
 
     private void initSpinner(View v) {

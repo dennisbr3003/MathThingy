@@ -29,6 +29,7 @@
     <!-- c -->
     <color name="Chocolate">#D2691E</color>
     <!-- d -->
+    <color name="DefaultBackground">#90FFFFFF</color>
     <!-- e -->
     <!-- f -->
     <color name="ForestGreen">#228B22</color>

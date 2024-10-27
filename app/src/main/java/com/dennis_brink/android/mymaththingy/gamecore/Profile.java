@@ -6,10 +6,18 @@ import java.io.Serializable;
 
 public class Profile extends DataStructure implements Serializable {
 
-    private boolean isRegistered, doUpsertOnline, showRegistrationFragment;
+    private boolean isRegistered, CompeteOnline, showRegistrationFragment;
+    private int playmode;
+
+    // isRegistered = registered locally
+    // CompeteOnline = compete online
+    // isRegistered + CompeteOnline = compete globally
+    // gamemode: 0 = anonymously, 1 = local, 2 = local and online
 
     public Profile() {
         super(StructureType.PROFILE);
+        this.showRegistrationFragment = true;
+        this.playmode = 2;
     }
 
     public boolean isRegistered() {
@@ -20,12 +28,12 @@ public class Profile extends DataStructure implements Serializable {
         isRegistered = registered;
     }
 
-    public boolean isDoUpsertOnline() {
-        return doUpsertOnline;
+    public boolean isCompeteOnline() {
+        return CompeteOnline;
     }
 
-    public void setDoUpsertOnline(boolean doUpsertOnline) {
-        this.doUpsertOnline = doUpsertOnline;
+    public void setCompeteOnline(boolean competeOnline) {
+        this.CompeteOnline = competeOnline;
     }
 
     public boolean isShowRegistrationFragment() {
@@ -36,13 +44,22 @@ public class Profile extends DataStructure implements Serializable {
         this.showRegistrationFragment = showRegistrationFragment;
     }
 
+    public int getPlaymode() {
+        return playmode;
+    }
+
+    public void setPlaymode(int playmode) {
+        this.playmode = playmode;
+    }
+
     @NonNull
     @Override
     public String toString() {
         return "Profile{" +
                 "isRegistered=" + isRegistered +
-                ", doUpsertOnline=" + doUpsertOnline +
+                ", CompeteOnline=" + CompeteOnline +
                 ", showRegistrationFragment=" + showRegistrationFragment +
+                ", playmode=" + playmode +
                 '}';
     }
 }

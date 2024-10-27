@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="_appname">Math Thingy</string>
     <string name="_showme">Show me</string>
     <string name="_newhighscore">New high score saved...</string>
@@ -28,20 +28,20 @@
     <string name="_time">Time</string>
     <string name="_15">15</string>
     <string name="_question">Question</string>
-    <string name="_pleaseanswerhere">Please answer here...</string>
+    <string name="_pleaseanswerhere">Please answer here…</string>
     <string name="_submit">Submit</string>
     <string name="_next">Next</string>
     <string name="_scorecaps">Score</string>
     <string name="_blackboard">blackboard</string>
     <string name="_owlglasses">owl_glasses</string>
-    <string name="_nowinnershere">There are no winners here...</string>
+    <string name="_nowinnershere">There are no winners here…</string>
     <string name="_addition">addition</string>
     <string name="_subtraction">subtraction</string>
     <string name="_multiplication">multiplication</string>
     <string name="_highscores">Highscores</string>
     <string name="_exit">Exit?</string>
     <string name="_validname">(You must enter a valid name)</string>
-    <string name="_yourname">Type your name here...</string>
+    <string name="_yourname">Type your name here…</string>
     <string name="_message">message</string>
     <string name="_textview">TextView</string>
     <string name="_seconds">Seconds</string>
@@ -60,11 +60,27 @@
     <string name="dummy_text">dummy text</string>
     <string name="_profile">Profile</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="_gamemenu">Game Menu</string>
-    <string name="_selectdifficulty">Select your difficulty here...</string>
+    <string name="_selectdifficulty">Select your difficulty here…</string>
     <string name="_gameprofile">Game Profile</string>
-    <string name="_setupprofile">Setup your game profile...</string>
-    <string name="_notregistered">Curently you are NOT registered online and you DO NOT compete in the global competition</string>
-    <string name="_registered">Curently you are registered online and you compete in the global competition</string>
+    <string name="_setupprofile">Setup your game profile…</string>
+    <string name="_notregistered">Currently you are NOT registered online and you DO NOT compete in the global competition</string>
+    <string name="_registered">Currently you are registered online and you compete in the global competition</string>
+    <string name="_introduction">No worries, just let us know how you want to play!</string>
+    <string name="_notregisteredtitle">Looking at the data it would seem that you are not registered and not connected to the global competition.</string>
+    <string name="_play_anonymously">I just want to play anonymously</string>
+    <string name="_play_anonymously_subtext">Sure, if you are boring and scared you can do this. You won\'t be able to humiliate other players and calculate them back to the stone age.</string>
+    <string name="_play_local">I will register but I won\'t compete online</string>
+    <string name="_play_local_subtext">“Just barely” <strike>could</strike> should be your motto. But at least you don\'t have to fill in your call sign with every high score, that is, if you enter your call sign.</string>
+    <string name="_play_full_force">I want global domination!!</string>
+    <string name="_play_full_force_subtext" tools:ignore="TypographyEllipsis">Yeah! It\'s time...for <b>GLORY</b> !  Flex the competition to a different universe with your math skills. Become the Math Magician you where destined to be!</string>
+    <string name="_savegamemode">Let\'s go</string>
+    <string name="_playstylesub" tools:ignore="TypographyEllipsis">Let us know how you want to play...</string>
+    <string name="_regcomptitle">Registration and compete</string>
+    <string name="_current_play_mode">Currently you are playing %1$s</string>
+    <string name="_compete_online">Compete online</string>
+    <string name="_tap_to_type">tap to type...</string>
+    <string name="_name">Name</string>
+    <string name="_call_sign">Call sign</string>
+    <string name="_email_address">E-mail address</string>
 </resources>

@@ -134,4 +134,5 @@ public class ResultFragment extends Fragment {
         if(countDownTimer != null) { countDownTimer.cancel(); }
         timerIsRunning = false;
     }
+
 }

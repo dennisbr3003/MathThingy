@@ -1,14 +1,144 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/frgNotRegistered"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".NotRegisteredFragment">
+    android:background="@color/DefaultBackground"
+    android:tag="NOTREGISTERED"
+    tools:context=".main.NotRegisteredFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="match_parent">
 
+        <ImageView
+            android:id="@+id/ivAskTheNerdMedium"
+            android:layout_width="121dp"
+            android:layout_height="112dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:contentDescription="nerd"
+            android:src="@drawable/askthenerdmedium"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="@color/DefaultBackground"
+            android:fontFamily="@font/atma_medium"
+            android:text="@string/_notregisteredtitle"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/ivAskTheNerdMedium"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvIntroduction"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="16dp"
+            android:background="@color/DefaultBackground"
+            android:fontFamily="@font/atma_medium"
+            android:text="@string/_introduction"
+            android:textAlignment="center"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ivAskTheNerdMedium" />
+
+        <RadioGroup
+            android:id="@+id/rgOptions"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvIntroduction">
+
+            <RadioButton
+                android:id="@+id/rbAnonymous"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/atma_medium"
+                android:tag="0"
+                android:text="@string/_play_anonymously"
+                android:textColorLink="@color/holo_blue_dark" />
+
+            <TextView
+                android:id="@+id/tvPlayAnonymouslyTaunt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/atma_medium"
+                android:paddingBottom="8dp"
+                android:text="@string/_play_anonymously_subtext" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/holo_blue_dark" />
+
+            <RadioButton
+                android:id="@+id/rbJustLocal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/atma_medium"
+                android:tag="1"
+                android:text="@string/_play_local"
+                android:textColorLink="@color/holo_blue_dark" />
+
+            <TextView
+                android:id="@+id/tvPlayLocalTaunt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/atma_medium"
+                android:paddingBottom="8dp"
+                android:text="@string/_play_local_subtext" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/holo_blue_dark" />
+
+            <RadioButton
+                android:id="@+id/rbFullForce"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:fontFamily="@font/atma_medium"
+                android:tag="2"
+                android:text="@string/_play_full_force"
+                android:textColorLink="@color/holo_blue_dark" />
+
+            <TextView
+                android:id="@+id/tvPlayFullForceTaunt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/atma_medium"
+                android:text="@string/_play_full_force_subtext" />
+
+        </RadioGroup>
+
+        <Button
+            android:id="@+id/btnSaveGameMode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:text="@string/_savegamemode"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

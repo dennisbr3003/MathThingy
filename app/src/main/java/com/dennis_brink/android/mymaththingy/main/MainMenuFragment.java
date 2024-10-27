@@ -1,4 +1,4 @@
-package com.dennis_brink.android.mymaththingy;
+package com.dennis_brink.android.mymaththingy.main;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,7 +10,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import java.util.Objects;
+import com.dennis_brink.android.mymaththingy.GameActivity;
+import com.dennis_brink.android.mymaththingy.HighScoreActivity;
+import com.dennis_brink.android.mymaththingy.IGameConstants;
+import com.dennis_brink.android.mymaththingy.ILogConstants;
+import com.dennis_brink.android.mymaththingy.R;
+import com.dennis_brink.android.mymaththingy.RegisterActivity;
+import com.dennis_brink.android.mymaththingy.gamecore.AppContext;
 
 public class MainMenuFragment extends Fragment implements IGameConstants, ILogConstants {
 

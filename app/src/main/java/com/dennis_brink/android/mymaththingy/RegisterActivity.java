@@ -40,6 +40,7 @@ public class RegisterActivity extends AppCompatActivity implements IRegisterActi
         fragmentManager.beginTransaction()
                 .add(R.id.fragmentContainerView, FormFragment.class, null)
                 .commit();
+
     }
 
     private IntentFilter getFilter(){
@@ -82,7 +83,7 @@ public class RegisterActivity extends AppCompatActivity implements IRegisterActi
         i.putExtra("ONLINE_REGISTRATION", true);
 
         Profile profile = GameCore.getProfile();
-        profile.setRegistered(true);
+        profile.setPlaymode(2);
         GameCore.saveDataStructure(profile);
 
         fragmentManager.beginTransaction()
@@ -92,7 +93,6 @@ public class RegisterActivity extends AppCompatActivity implements IRegisterActi
 
     @Override
     public void onlineRegistrationFailure(String msg) {
-        Log.d("DB1", "Registration failure, stop spinner, switch fragment to result + failure + error");
 
         // getting data from the intent so it will be available for the activity
         Intent i = getIntent();
@@ -106,10 +106,14 @@ public class RegisterActivity extends AppCompatActivity implements IRegisterActi
 
     @Override
     public void localRegistrationSuccess() {
-        Log.d("DB1", "Registration success, stop spinner, switch fragment to result + success");
 
         Intent i = getIntent();
         i.putExtra("ONLINE_REGISTRATION", true);
+
+        Profile profile = GameCore.getProfile();
+        profile.setRegistered(true);
+        profile.setShowRegistrationFragment(false);
+        GameCore.saveDataStructure(profile);
 
         fragmentManager.beginTransaction()
                 .replace(R.id.fragmentContainerView, ResultFragment.class, null)
@@ -118,7 +122,6 @@ public class RegisterActivity extends AppCompatActivity implements IRegisterActi
 
     @Override
     public void localRegistrationFailure(String msg) {
-        Log.d("DB1", "Registration failure, stop spinner, switch fragment to result + failure + error");
 
         // getting data from the intent so it will be available for the activity
         Intent i = getIntent();

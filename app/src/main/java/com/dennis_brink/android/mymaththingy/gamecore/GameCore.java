@@ -4,8 +4,6 @@ import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 
-import com.dennis_brink.android.mymaththingy.AppContext;
-
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -77,7 +75,7 @@ public class GameCore extends Application implements IGameCore {
         return dataStructure;
     }
     public String getHelp() {
-        return "help's on the way";
+        return "help is on it's way";
     }
 
 }

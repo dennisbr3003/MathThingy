@@ -2,9 +2,11 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/frgMainMenu"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainMenuFragment">
+    android:tag="MAINMENU"
+    tools:context=".main.MainMenuFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/ConstraintLayout"
@@ -16,11 +18,9 @@
             android:id="@+id/btnAdd"
             android:layout_width="200dp"
             android:layout_height="60dp"
-            android:layout_marginTop="50dp"
-            android:layout_marginBottom="15dp"
+            android:layout_marginTop="24dp"
             android:backgroundTint="@color/holo_blue_dark"
             android:text="@string/_addition"
-            app:layout_constraintBottom_toTopOf="@+id/btnSubtract"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -29,10 +29,9 @@
             android:id="@+id/btnSubtract"
             android:layout_width="200dp"
             android:layout_height="60dp"
-            android:layout_marginBottom="15dp"
+            android:layout_marginTop="16dp"
             android:backgroundTint="@color/holo_blue_dark"
             android:text="@string/_subtraction"
-            app:layout_constraintBottom_toTopOf="@+id/btnMultiply"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/btnAdd" />
@@ -41,10 +40,9 @@
             android:id="@+id/btnMultiply"
             android:layout_width="200dp"
             android:layout_height="60dp"
-            android:layout_marginBottom="15dp"
+            android:layout_marginTop="16dp"
             android:backgroundTint="@color/holo_blue_dark"
             android:text="@string/_multiplication"
-            app:layout_constraintBottom_toTopOf="@+id/btnHighScores"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/btnSubtract" />
@@ -53,10 +51,9 @@
             android:id="@+id/btnHighScores"
             android:layout_width="200dp"
             android:layout_height="60dp"
-            android:layout_marginBottom="15dp"
+            android:layout_marginTop="16dp"
             android:backgroundTint="@color/holo_blue_dark"
             android:text="@string/_highscores"
-            app:layout_constraintBottom_toTopOf="@+id/btnGoToRegistration"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/btnMultiply" />
@@ -65,10 +62,9 @@
             android:id="@+id/btnGoToRegistration"
             android:layout_width="200dp"
             android:layout_height="60dp"
-            android:layout_marginBottom="15dp"
+            android:layout_marginTop="16dp"
             android:backgroundTint="@color/holo_blue_dark"
             android:text="@string/_profile"
-            app:layout_constraintBottom_toTopOf="@+id/btnExit"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/btnHighScores" />
@@ -77,10 +73,9 @@
             android:id="@+id/btnExit"
             android:layout_width="200dp"
             android:layout_height="60dp"
-            android:layout_marginBottom="15dp"
+            android:layout_marginTop="16dp"
             android:backgroundTint="@color/holo_blue_dark"
             android:text="@string/_close"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/btnGoToRegistration" />

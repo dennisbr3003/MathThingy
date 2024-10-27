@@ -3,7 +3,7 @@ package com.dennis_brink.android.mymaththingy.gamecore;
 import android.annotation.SuppressLint;
 import android.provider.Settings;
 import androidx.annotation.NonNull;
-import com.dennis_brink.android.mymaththingy.AppContext;
+
 import java.io.Serializable;
 
 // If you use serializable on this class, make sure you also do this on the super
@@ -18,6 +18,9 @@ public class Player extends DataStructure implements Serializable, IGameCore {
         super(StructureType.PLAYER);
         this.deviceId = Settings.Secure.getString(AppContext.getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
         this.language = DEFAULT_LANG; // default language
+        this.email = "";
+        this.callSign = "";
+        this.displayName = "";
     }
 
     public String getDeviceId() {
@@ -70,6 +73,10 @@ public class Player extends DataStructure implements Serializable, IGameCore {
                 ", email='" + email + '\'' +
                 ", language='" + language + '\'' +
                 '}';
+    }
+
+    public boolean isEmpty(){
+        return this.callSign.isEmpty() && this.email.isEmpty() && this.displayName.isEmpty();
     }
 }
 
