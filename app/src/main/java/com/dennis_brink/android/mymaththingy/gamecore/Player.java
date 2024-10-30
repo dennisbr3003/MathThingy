@@ -11,6 +11,8 @@ import java.io.Serializable;
 
 public class Player extends DataStructure implements Serializable, IGameCore {
 
+    private static final long serialVersionUID = -3280264790446479715L;
+
     private String deviceId, callSign, displayName, email, language;
 
     @SuppressLint("HardwareIds")

@@ -87,8 +87,7 @@ public class NotRegisteredFragment extends Fragment {
                         startActivity(intent); // run it
 
                     } else { // 0 = go back to main menu (= reload with new profile values)
-                        Intent intent = new Intent(AppContext.getContext(), MainActivity.class); // from --> to
-                        startActivity(intent); // run it
+                        ((MainActivity)requireActivity()).loadMainMenuFragment();
                     }
                 }
             }

@@ -29,6 +29,14 @@ public class GameCore extends Application implements IGameCore {
         return player;
     }
 
+    public static ScoreSet getScoreSet() {
+        ScoreSet scores = (ScoreSet) readData(SCORE_FILE);
+        if (scores == null) {
+            scores = new ScoreSet();
+        }
+        return scores;
+    }
+
     public static void saveDataStructure(DataStructure dataStructure) {
         Log.d(TAG, "saveDataStructure " + dataStructure.toString());
         switch(dataStructure.getType()) {

@@ -87,7 +87,6 @@ public class DialogWrapper implements IGameConstants, ILogConstants {
         AlertDialog dlg = builder.create();
 
         imgSaveName.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onClick(View v) {
 

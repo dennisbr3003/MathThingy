@@ -6,6 +6,8 @@ import java.io.Serializable;
 
 public class Profile extends DataStructure implements Serializable {
 
+    private static final long serialVersionUID = -233926627569299281L;
+
     private boolean isRegistered, CompeteOnline, showRegistrationFragment;
     private int playmode;
 

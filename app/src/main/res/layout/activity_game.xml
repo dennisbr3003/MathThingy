@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background_main"
+    android:background="@drawable/math15"
     android:gravity="center_horizontal"
     android:orientation="vertical"
     tools:context=".GameActivity">
@@ -16,6 +16,7 @@
         android:layout_marginTop="5dp"
         android:layout_marginRight="5dp"
         android:layout_marginBottom="5dp"
+        android:background="@color/DefaultBackground"
         android:orientation="horizontal">
 
         <TextView
@@ -25,9 +26,9 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:layout_weight="1"
+            android:fontFamily="@font/atma_medium"
             android:text="@string/_scorecaps"
             android:textAlignment="center"
-            android:textColor="@color/WhiteSmoke"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -38,9 +39,9 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:layout_weight="1"
+            android:fontFamily="@font/atma_medium"
             android:text="@string/_0"
             android:textAlignment="center"
-            android:textColor="@color/WhiteSmoke"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -50,9 +51,9 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:layout_weight="1"
+            android:fontFamily="@font/atma_medium"
             android:text="@string/_streakcaps"
             android:textAlignment="center"
-            android:textColor="@color/WhiteSmoke"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -63,9 +64,9 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:layout_weight="1"
+            android:fontFamily="@font/atma_medium"
             android:text="@string/_0"
             android:textAlignment="center"
-            android:textColor="@color/WhiteSmoke"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -75,9 +76,9 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:layout_weight="1"
+            android:fontFamily="@font/atma_medium"
             android:text="@string/_life"
             android:textAlignment="center"
-            android:textColor="@color/WhiteSmoke"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -88,9 +89,9 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:layout_weight="1"
+            android:fontFamily="@font/atma_medium"
             android:text="@string/_3"
             android:textAlignment="center"
-            android:textColor="@color/WhiteSmoke"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -100,9 +101,9 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:layout_weight="1"
+            android:fontFamily="@font/atma_medium"
             android:text="@string/_time"
             android:textAlignment="center"
-            android:textColor="@color/WhiteSmoke"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -114,9 +115,9 @@
             android:layout_marginEnd="10dp"
             android:layout_marginBottom="10dp"
             android:layout_weight="1"
+            android:fontFamily="@font/atma_medium"
             android:text="@string/_15"
             android:textAlignment="center"
-            android:textColor="@color/WhiteSmoke"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -145,6 +146,7 @@
             android:layout_width="276dp"
             android:layout_height="85dp"
             android:layout_marginTop="20dp"
+            android:fontFamily="@font/atma"
             android:gravity="center"
             android:text="@string/_question"
             android:textColor="@color/WhiteSmoke"
@@ -162,21 +164,22 @@
             android:layout_width="282dp"
             android:layout_height="54dp"
             android:layout_marginBottom="45dp"
+            android:autofillHints=""
             android:backgroundTint="@color/WhiteSmoke"
             android:ems="10"
+            android:fontFamily="@font/atma"
             android:hint="@string/_pleaseanswerhere"
             android:inputType="number"
             android:textAlignment="center"
             android:textColor="@color/WhiteSmoke"
-            android:textColorHint="@color/WhiteSmoke"
+            android:textColorHint="@color/DefaultBackground"
             android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.519"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txtQuestion"
-            android:autofillHints="" />
+            app:layout_constraintTop_toBottomOf="@+id/txtQuestion" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -194,6 +197,7 @@
             android:layout_marginBottom="60dp"
             android:layout_weight="1"
             android:backgroundTint="@android:color/holo_blue_dark"
+            android:fontFamily="@font/atma_medium"
             android:text="@string/_submit"
             tools:ignore="TextContrastCheck" />
 
@@ -206,6 +210,7 @@
             android:layout_marginBottom="60dp"
             android:layout_weight="1"
             android:backgroundTint="@android:color/holo_blue_dark"
+            android:fontFamily="@font/atma_medium"
             android:text="@string/_next"
             tools:ignore="TextContrastCheck" />
 
@@ -220,6 +225,7 @@
             android:layout_width="200dp"
             android:layout_height="0dp"
             android:layout_marginEnd="31dp"
+            android:background="@color/DefaultBackground"
             android:contentDescription="@string/_owlglasses"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

@@ -7,7 +7,6 @@ import androidx.fragment.app.FragmentManager;
 
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +33,8 @@ public class MainActivity extends AppCompatActivity implements ILogConstants {
         ivMathBook = findViewById(R.id.ivMathBook);
 
         setupLogo();
+        getSupportFragmentManager().popBackStack();
+        loadMainMenuFragment();
 
     }
 
@@ -44,25 +45,24 @@ public class MainActivity extends AppCompatActivity implements ILogConstants {
         super.onResume();
 
         Profile profile = GameCore.getProfile();
-        Log.d("DENNIS_B", profile.toString());
         if(!(profile.isCompeteOnline() && profile.isRegistered()) && profile.isShowRegistrationFragment() && profile.getPlaymode() != 0) {
             setupLogoNotRegisteredText();
             ivMathBook.setVisibility(View.GONE);
+            // this runs after onCreate so this code will replace the menu fragment if needed.
             fragmentManager.beginTransaction()
                     .replace(R.id.fragmentContainerMainActivity, NotRegisteredFragment.class, null, "regis")
                     .setReorderingAllowed(true)
                     .commit();
-        } else {
-            loadMainMenuFragment();
         }
     }
 
     private void setupLogo(){
+
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowCustomEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        LayoutInflater infl = LayoutInflater.from(this);
-        View v = infl.inflate(R.layout.actionbar, null);
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View v = inflater.inflate(R.layout.actionbar, null);
 
         TextView tvActionBarMainTitle = v.findViewById(R.id.tvActionBarMainTitle);
         tvActionBarMainTitle.setText(R.string._gamemenu);

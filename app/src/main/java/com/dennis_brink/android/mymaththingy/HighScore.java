@@ -65,7 +65,7 @@ public class HighScore implements ILogConstants {
 		int i=0;
 		for(HighScoreEntry highScoreEntry: full_list){			
 			if ((i >= startElement) && (i <= endElement)){
-				Log.d(LOG_TAG, "HighScore.class: (getSubSet) Copying " + highScoreEntry.getName() + " rank " + highScoreEntry.getRank());
+				Log.d(LOG_TAG, "HighScore.class: (getSubSet) Copying " + highScoreEntry.getName() + " player_rank " + highScoreEntry.getRank());
 				target.add(SerializationUtils.clone(highScoreEntry)); // deep copy (not a reference)
 			}
 			i++;
@@ -79,12 +79,12 @@ public class HighScore implements ILogConstants {
 
 	public int getRank(String key) {
 
-		Log.d(LOG_TAG, "HighScore.class: (getRank) Getting rank with key " + key);
+		Log.d(LOG_TAG, "HighScore.class: (getRank) Getting player_rank with key " + key);
 		if(!full_list.equals(null)) {
 			printSet();
 			for (HighScoreEntry highScoreEntry : full_list) {
 				if (highScoreEntry.getId().equals(key)) {
-					Log.d(LOG_TAG, "HighScore.class: (getRank) Finding object with id " + key +  " with rank " + highScoreEntry.getRank());
+					Log.d(LOG_TAG, "HighScore.class: (getRank) Finding object with id " + key +  " with player_rank " + highScoreEntry.getRank());
 					return highScoreEntry.getRank();
 				}
 			}
@@ -123,7 +123,7 @@ public class HighScore implements ILogConstants {
 			HighScoreEntry highScoreEntry = new HighScoreEntry(score, time,  streaks, name);
 			this.full_list.add(highScoreEntry);
 			rankSet();
-			Log.d(LOG_TAG, "HighScore.class: (addHighScoreEntry) Added high score object with id " + highScoreEntry.getId() +  " with rank " + highScoreEntry.getRank());
+			Log.d(LOG_TAG, "HighScore.class: (addHighScoreEntry) Added high score object with id " + highScoreEntry.getId() +  " with player_rank " + highScoreEntry.getRank());
 			if(full_list.size() > this.numberOfElements) {
 				Log.d(LOG_TAG, "HighScore.class: (addHighScoreEntry) Number of elements, " + full_list.size() + ", is greater then the maximum number of objects allowed (" + this.numberOfElements + "); start to trim the set");
 				trimHighScoreSet(); // reduce it to 10 elements or less
@@ -262,7 +262,7 @@ public class HighScore implements ILogConstants {
 					", time=" + time +
 					", streaks=" + streaks +
 					", name='" + name + '\'' +
-					", rank=" + rank +
+					", player_rank=" + rank +
 					", id='" + id + '\'' +
 					", displayTime='" + displayTime + '\'' +
 					'}';

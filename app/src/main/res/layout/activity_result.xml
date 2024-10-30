@@ -5,17 +5,20 @@
     android:id="@+id/layoutResultParentLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background"
+    android:background="@drawable/math15"
     android:orientation="vertical"
+    android:paddingStart="5dp"
+    android:paddingEnd="5dp"
     tools:context=".ResultActivity">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
+        android:background="@color/DefaultBackground"
+        android:fontFamily="@font/atma_medium"
         android:gravity="center_horizontal"
         android:text="@string/_congratulations"
-        android:textColor="@color/WhiteSmoke"
         android:textSize="24sp"
         android:textStyle="bold" />
 
@@ -24,9 +27,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
+        android:background="@color/DefaultBackground"
+        android:fontFamily="@font/atma_medium"
         android:gravity="center_horizontal"
         android:text="@string/_score"
-        android:textColor="@color/WhiteSmoke"
         android:textSize="20sp"
         android:textStyle="bold" />
 
@@ -51,6 +55,7 @@
             android:layout_marginRight="20dp"
             android:layout_weight="1"
             android:backgroundTint="@android:color/holo_blue_dark"
+            android:fontFamily="@font/atma_medium"
             android:text="@string/_playagain"
             tools:ignore="TextContrastCheck" />
 
@@ -63,6 +68,7 @@
             android:layout_marginRight="20dp"
             android:layout_weight="1"
             android:backgroundTint="@android:color/holo_blue_dark"
+            android:fontFamily="@font/atma_medium"
             android:text="@string/_close"
             tools:ignore="TextContrastCheck" />
 

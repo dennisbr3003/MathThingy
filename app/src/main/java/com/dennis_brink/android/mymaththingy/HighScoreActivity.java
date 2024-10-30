@@ -14,6 +14,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.dennis_brink.android.mymaththingy.gamecore.GameCore;
+import com.dennis_brink.android.mymaththingy.gamecore.ScoreSet;
 import com.github.clans.fab.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -47,6 +49,9 @@ public class HighScoreActivity extends AppCompatActivity implements IGameConstan
         } catch(Exception e){
             Log.d(LOG_TAG, "HighScoreActivity.class: (onCreate) --> " + e.getMessage());
         }
+
+        ScoreSet scoreSet = GameCore.getScoreSet();
+        Log.d(LOG_TAG, "HighScoreActivity.class: (onCreate) --> " + scoreSet.getScores());
 
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(HighScoreActivity.this, LinearLayoutManager.VERTICAL, false)); // horizontal
