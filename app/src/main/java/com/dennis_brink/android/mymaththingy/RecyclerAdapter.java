@@ -12,20 +12,29 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.dennis_brink.android.mymaththingy.gamecore.Score;
+
 import java.util.ArrayList;
 import java.util.Set;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.HighScoreViewHolder> implements ILogConstants {
 
     private Set<HighScore.HighScoreEntry> full_list;
-    private ArrayList<HighScore.HighScoreEntry> full_list_array_list;
-    private ArrayList<Integer> imageList;
-    private Context context; // for the toaster
+    // private ArrayList<HighScore.HighScoreEntry> full_list_array_list;
+    private final ArrayList<Score> full_list_array_list;
+    private final ArrayList<Integer> imageList;
+    //private Context context; // for the toaster
 
-    public RecyclerAdapter(ArrayList<HighScore.HighScoreEntry> full_list_array_list, ArrayList<Integer> imageList, Context context) {
+//    public RecyclerAdapter(ArrayList<HighScore.HighScoreEntry> full_list_array_list, ArrayList<Integer> imageList, Context context) {
+//        this.full_list_array_list = full_list_array_list;
+//        this.imageList = imageList;
+//        this.context = context;
+//    }
+
+    public RecyclerAdapter(ArrayList<Score> full_list_array_list, ArrayList<Integer> imageList, Context context) {
         this.full_list_array_list = full_list_array_list;
         this.imageList = imageList;
-        this.context = context;
+        //this.context = context;
     }
 
     @NonNull
@@ -48,7 +57,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.HighSc
 
         try {
             holder.textViewHighScoreName.setText(full_list_array_list.get(position).getName());
-            holder.textViewDetails.setText(String.valueOf(full_list_array_list.get(position).getDisplayTime()));
+            holder.textViewDetails.setText(String.valueOf(full_list_array_list.get(position).getCreated()));
             holder.textHighScore.setText((String.valueOf(full_list_array_list.get(position).getScore())));
             holder.textHighScoreStreaks.setText((String.valueOf(full_list_array_list.get(position).getStreaks())));
             holder.textHighScoreTime.setText((String.valueOf(full_list_array_list.get(position).getTime())));

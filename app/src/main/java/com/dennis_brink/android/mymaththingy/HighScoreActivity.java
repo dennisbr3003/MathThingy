@@ -1,5 +1,6 @@
 package com.dennis_brink.android.mymaththingy;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.os.Build;
@@ -15,18 +16,21 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dennis_brink.android.mymaththingy.gamecore.GameCore;
+import com.dennis_brink.android.mymaththingy.gamecore.Score;
 import com.dennis_brink.android.mymaththingy.gamecore.ScoreSet;
 import com.github.clans.fab.FloatingActionButton;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class HighScoreActivity extends AppCompatActivity implements IGameConstants, IHighScoreDeleteListener, ILogConstants {
 
     HighScore highScore;
     private RecyclerView recyclerView;
     private RecyclerAdapter adapter;
-    private ArrayList<Integer>imageList = new ArrayList<>();
+    private final ArrayList<Integer> imageList = new ArrayList<>();
     private ArrayList<HighScore.HighScoreEntry> full_list_as_array = null;
+    private ArrayList<Score> scoreSetAsArray;
     private TextView txtWinners;
     Receiver receiver = null;
 
@@ -41,33 +45,42 @@ public class HighScoreActivity extends AppCompatActivity implements IGameConstan
 
         floatingActionButton = findViewById(R.id.fabDelete);
         txtWinners = findViewById(R.id.txtNoWinners);
-        highScore = new HighScore(HighScoreActivity.this, HIGHSCORE_LISTLENGTH);
+//        highScore = new HighScore(HighScoreActivity.this, HIGHSCORE_LISTLENGTH);
+//
+//        try {
+//            full_list_as_array = highScore.getSetAsArray();
+//            //setWinnerTextView(full_list_as_array);
+//        } catch(Exception e){
+//            Log.d(LOG_TAG, "HighScoreActivity.class: (onCreate) --> " + e.getMessage());
+//        }
 
         try {
-            full_list_as_array = highScore.getSetAsArray();
-            setWinnerTextView(full_list_as_array);
+
+            ScoreSet scoreSet = GameCore.getScoreSet();
+            Log.d(LOG_TAG, "HighScoreActivity.class: (onCreate) --> " + scoreSet.getScores());
+            scoreSetAsArray = scoreSet.getSetAsArray();
+            setWinnerTextView(scoreSetAsArray.isEmpty());
         } catch(Exception e){
             Log.d(LOG_TAG, "HighScoreActivity.class: (onCreate) --> " + e.getMessage());
         }
-
-        ScoreSet scoreSet = GameCore.getScoreSet();
-        Log.d(LOG_TAG, "HighScoreActivity.class: (onCreate) --> " + scoreSet.getScores());
 
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(HighScoreActivity.this, LinearLayoutManager.VERTICAL, false)); // horizontal
 
         loadImageList();
 
-        adapter = new RecyclerAdapter(full_list_as_array, imageList, HighScoreActivity.this);
+//        adapter = new RecyclerAdapter(full_list_as_array, imageList, HighScoreActivity.this);
+        adapter = new RecyclerAdapter(scoreSetAsArray, imageList, HighScoreActivity.this);
         recyclerView.setAdapter(adapter);
+
 
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // show dialog
-                if (full_list_as_array.size() != 0) {
+                if (!scoreSetAsArray.isEmpty()) {
                     AlertDialog dlg = DialogWrapper.getDeleteConfirmDialog(HighScoreActivity.this);
-                    dlg.show();
+                    Objects.requireNonNull(dlg).show();
                 }
             }
         });
@@ -89,15 +102,18 @@ public class HighScoreActivity extends AppCompatActivity implements IGameConstan
 
     }
 
-    private void setWinnerTextView(ArrayList<HighScore.HighScoreEntry> full_list_as_array){
-        if (full_list_as_array.size() == 0){
-            // show "no winners" textview
-            txtWinners.setVisibility(View.VISIBLE);
-        } else {
-            txtWinners.setVisibility(View.INVISIBLE);
-        }
+    private void setWinnerTextView(boolean emptySet){
+        if (emptySet) txtWinners.setVisibility(View.VISIBLE);
+        else txtWinners.setVisibility(View.INVISIBLE);
+//        if (full_list_as_array.isEmpty()){
+//            // show "no winners" textview
+//            txtWinners.setVisibility(View.VISIBLE);
+//        } else {
+//            txtWinners.setVisibility(View.INVISIBLE);
+//        }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     @Override
     public void deleteHighScoreList() {
 
@@ -107,7 +123,7 @@ public class HighScoreActivity extends AppCompatActivity implements IGameConstan
         Log.d(LOG_TAG, "HighScoreActivity.class: (deleteHighScoreList) Saved TreeSet cleared and written");
         adapter.notifyDataSetChanged();  // notify adapter to refresh itself
         Log.d(LOG_TAG, "HighScoreActivity.class: (deleteHighScoreList) Adapter notified of changes in data");
-        setWinnerTextView(full_list_as_array); // show/hide textview
+        setWinnerTextView(scoreSetAsArray.isEmpty()); // show/hide textview
 
     }
 

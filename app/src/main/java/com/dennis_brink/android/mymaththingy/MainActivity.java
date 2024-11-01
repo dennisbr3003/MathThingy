@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentManager;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +36,8 @@ public class MainActivity extends AppCompatActivity implements ILogConstants {
         setupLogo();
         getSupportFragmentManager().popBackStack();
         loadMainMenuFragment();
+
+        Log.d(LOG_TAG, GameCore.getScoreSet().toString());
 
     }
 

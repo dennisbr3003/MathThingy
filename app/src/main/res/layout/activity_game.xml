@@ -144,7 +144,7 @@
         <TextView
             android:id="@+id/txtQuestion"
             android:layout_width="276dp"
-            android:layout_height="85dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:fontFamily="@font/atma"
             android:gravity="center"

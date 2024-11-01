@@ -5,6 +5,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -12,17 +13,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ScoreSet extends DataStructure implements Serializable, IGameCore {
 
     private static final long serialVersionUID = -3466108228447407941L;
-
     private Set<Score> scores = new TreeSet<>();
-
     public ScoreSet() {
         super(StructureType.SCORE);
     }
-
     public Set<Score> getScores() {
         return scores;
     }
-
     public void setScores(Set<Score> scores) {
         this.scores = scores;
     }
@@ -62,6 +59,9 @@ public class ScoreSet extends DataStructure implements Serializable, IGameCore {
                 score.setName(name);
             }
         });
+    }
+    public ArrayList<Score> getSetAsArray() {
+        return new ArrayList<>(scores);
     }
 
     @NonNull
