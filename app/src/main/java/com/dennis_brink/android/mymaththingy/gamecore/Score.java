@@ -13,17 +13,17 @@ public class Score implements Comparable<Score>, Serializable, IGameCore {
 
     private static final long serialVersionUID = -6048047469895770785L;
 
-    private String name, id, created, callSign;
+    private String name, id, created, callSign, gl_sync;
     private Integer score, time, streaks, rank, gl_rank;
-    private boolean loaded;
+    private boolean gl_loaded;
 
     public Score() {
-        this.loaded = false; // default not uploaded to MongoDB
+        this.gl_loaded = false; // default not uploaded to MongoDB
         initScore();
     }
 
     public Score(String name, int score, int time, int streaks) {
-        this.loaded = false; // default not uploaded to MongoDB
+        this.gl_loaded = false; // default not uploaded to MongoDB
         this.name = name;
         this.score = score;
         this.time = time;
@@ -103,12 +103,24 @@ public class Score implements Comparable<Score>, Serializable, IGameCore {
         this.gl_rank = gl_rank;
     }
 
-    public boolean isLoaded() {
-        return loaded;
+    public boolean isGl_loaded() {
+        return gl_loaded;
     }
 
-    public void setLoaded(boolean loaded) {
-        this.loaded = loaded;
+    @SuppressLint("DefaultLocale")
+    public void setGl_loaded(boolean gl_loaded) {
+        this.gl_loaded = gl_loaded;
+        if(this.gl_loaded){
+            this.gl_sync = getCurrentDisplayDateTime();
+        }
+    }
+
+    public String getGl_sync() {
+        return gl_sync;
+    }
+
+    public void setGl_sync(String gl_sync) {
+        this.gl_sync = gl_sync;
     }
 
     @SuppressLint("DefaultLocale")
@@ -117,15 +129,10 @@ public class Score implements Comparable<Score>, Serializable, IGameCore {
         this.id = UUID.randomUUID().toString();
         this.gl_rank = -1;
         this.callSign = "";
+        this.created = getCurrentDisplayDateTime();
+        this.gl_sync = "";
 
-        Calendar localDateTime = Calendar.getInstance(Locale.getDefault());
 
-        this.created = String.format("%02d/%02d/%04d %02d:%02d",
-                localDateTime.get(Calendar.DAY_OF_MONTH),
-                localDateTime.get(Calendar.MONTH) + 1, // 0-based, january = month 0
-                localDateTime.get(Calendar.YEAR),
-                localDateTime.get(Calendar.HOUR_OF_DAY),
-                localDateTime.get(Calendar.MINUTE));
     }
 
     @Override
@@ -160,6 +167,18 @@ public class Score implements Comparable<Score>, Serializable, IGameCore {
         }
     }
 
+    @SuppressLint("DefaultLocale")
+    private String getCurrentDisplayDateTime() {
+        Calendar localDateTime = Calendar.getInstance(Locale.getDefault());
+
+        return String.format("%02d/%02d/%04d %02d:%02d",
+                localDateTime.get(Calendar.DAY_OF_MONTH),
+                localDateTime.get(Calendar.MONTH) + 1, // 0-based, january = month 0
+                localDateTime.get(Calendar.YEAR),
+                localDateTime.get(Calendar.HOUR_OF_DAY),
+                localDateTime.get(Calendar.MINUTE));
+    }
+
     @NonNull
     @Override
     public String toString() {
@@ -168,12 +187,13 @@ public class Score implements Comparable<Score>, Serializable, IGameCore {
                 ", id='" + id + '\'' +
                 ", created='" + created + '\'' +
                 ", callSign='" + callSign + '\'' +
+                ", gl_sync='" + gl_sync + '\'' +
                 ", score=" + score +
                 ", time=" + time +
                 ", streaks=" + streaks +
                 ", rank=" + rank +
                 ", gl_rank=" + gl_rank +
-                ", loaded=" + loaded +
+                ", gl_loaded=" + gl_loaded +
                 '}';
     }
 }

@@ -9,30 +9,29 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dennis_brink.android.mymaththingy.gamecore.Score;
 
 import java.util.ArrayList;
-import java.util.Set;
+// import java.util.Set;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.HighScoreViewHolder> implements ILogConstants {
 
-    private Set<HighScore.HighScoreEntry> full_list;
-    // private ArrayList<HighScore.HighScoreEntry> full_list_array_list;
-    private final ArrayList<Score> full_list_array_list;
+    // private Set<HighScore.HighScoreEntry> full_list;
+    // private ArrayList<HighScore.HighScoreEntry> scoreSetAsArrayList;
+    private final ArrayList<Score> scoreSetAsArrayList;
     private final ArrayList<Integer> imageList;
     //private Context context; // for the toaster
 
-//    public RecyclerAdapter(ArrayList<HighScore.HighScoreEntry> full_list_array_list, ArrayList<Integer> imageList, Context context) {
-//        this.full_list_array_list = full_list_array_list;
+//    public RecyclerAdapter(ArrayList<HighScore.HighScoreEntry> scoreSetAsArrayList, ArrayList<Integer> imageList, Context context) {
+//        this.scoreSetAsArrayList = scoreSetAsArrayList;
 //        this.imageList = imageList;
 //        this.context = context;
 //    }
 
-    public RecyclerAdapter(ArrayList<Score> full_list_array_list, ArrayList<Integer> imageList, Context context) {
-        this.full_list_array_list = full_list_array_list;
+    public RecyclerAdapter(ArrayList<Score> scoreSetAsArrayList, ArrayList<Integer> imageList, Context context) {
+        this.scoreSetAsArrayList = scoreSetAsArrayList;
         this.imageList = imageList;
         //this.context = context;
     }
@@ -56,31 +55,45 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.HighSc
     public void onBindViewHolder(@NonNull RecyclerAdapter.HighScoreViewHolder holder, int position) {
 
         try {
-            holder.textViewHighScoreName.setText(full_list_array_list.get(position).getName());
-            holder.textViewDetails.setText(String.valueOf(full_list_array_list.get(position).getCreated()));
-            holder.textHighScore.setText((String.valueOf(full_list_array_list.get(position).getScore())));
-            holder.textHighScoreStreaks.setText((String.valueOf(full_list_array_list.get(position).getStreaks())));
-            holder.textHighScoreTime.setText((String.valueOf(full_list_array_list.get(position).getTime())));
+            holder.textViewHighScoreName.setText(scoreSetAsArrayList.get(position).getName());
+            holder.textViewDetails.setText(String.valueOf(scoreSetAsArrayList.get(position).getCreated()));
+            holder.textHighScore.setText((String.valueOf(scoreSetAsArrayList.get(position).getScore())));
+            holder.textHighScoreStreaks.setText((String.valueOf(scoreSetAsArrayList.get(position).getStreaks())));
+            holder.textHighScoreTime.setText((String.valueOf(scoreSetAsArrayList.get(position).getTime())));
             holder.imageRank.setImageResource(imageList.get(position));
+            holder.tvGlobalScore.setText(getGlobalScoreText(scoreSetAsArrayList.get(position)));
+            holder.tvSynced.setText(getSyncedText(scoreSetAsArrayList.get(position)));
         } catch (Exception e){
             Log.d(LOG_TAG, "RecyclerAdapter.class: (onBindViewHolder) --> " + e.getMessage());
         }
 
     }
 
-    @Override
-    public int getItemCount() {
-        return full_list_array_list.size();
+    private String getSyncedText(Score score) {
+        Log.d(LOG_TAG, "leeg? "+ score.getGl_sync().isEmpty());
+        if(!score.getGl_sync().isEmpty()){
+            return String.format("Synced: %s", score.getGl_sync());
+        } else {
+            return "";
+        }
     }
 
-    public class HighScoreViewHolder extends RecyclerView.ViewHolder {
+    private String getGlobalScoreText(Score score) {
+        if(score.isGl_loaded()){
+            return String.valueOf(score.getGl_rank());
+        } else {
+            return ""; // this will effectively hide the textView
+        }
+    }
 
-        // we need a holder for the card_design
+    @Override
+    public int getItemCount() {
+        return scoreSetAsArrayList.size();
+    }
 
-        private TextView textViewHighScoreName,textViewDetails,textHighScore,textHighScoreStreaks,textHighScoreTime;
+    public static class HighScoreViewHolder extends RecyclerView.ViewHolder {
+        private TextView textViewHighScoreName,textViewDetails,textHighScore,textHighScoreStreaks,textHighScoreTime,tvGlobalScore,tvSynced;
         private ImageView imageRank;
-        private CardView cardView;
-
         public HighScoreViewHolder(@NonNull View itemView) {
             super(itemView);
             // itemView is actually the card_design and so itemView "has" al the controls on it we need to fill
@@ -91,7 +104,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.HighSc
                 textHighScoreStreaks = itemView.findViewById(R.id.txtHighScoreStreaks);
                 textHighScoreTime = itemView.findViewById(R.id.txtHighScoreTime);
                 imageRank = itemView.findViewById(R.id.imageRank);
-                cardView = itemView.findViewById(R.id.cardViewListItem);
+                tvGlobalScore = itemView.findViewById(R.id.tvGlobalScore);
+                tvSynced = itemView.findViewById(R.id.tvSynced);
             } catch (Exception e){
                 Log.d(LOG_TAG, "RecyclerAdapter.class: (HighScoreViewHolder) --> " + e.getMessage());
             }

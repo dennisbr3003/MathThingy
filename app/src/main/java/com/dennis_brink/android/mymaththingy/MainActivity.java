@@ -47,15 +47,19 @@ public class MainActivity extends AppCompatActivity implements ILogConstants {
 
         super.onResume();
 
+        Log.d(LOG_TAG, "onresume");
+
         Profile profile = GameCore.getProfile();
+
+        Log.d(LOG_TAG, "compete online " + profile.isCompeteOnline());
+        Log.d(LOG_TAG, "profile is registered " + profile.isRegistered());
+        Log.d(LOG_TAG, "showFragment " + profile.isShowRegistrationFragment());
+        Log.d(LOG_TAG, "Playmode (0, 1, 2) " + profile.getPlaymode() );
+
         if(!(profile.isCompeteOnline() && profile.isRegistered()) && profile.isShowRegistrationFragment() && profile.getPlaymode() != 0) {
-            setupLogoNotRegisteredText();
-            ivMathBook.setVisibility(View.GONE);
-            // this runs after onCreate so this code will replace the menu fragment if needed.
-            fragmentManager.beginTransaction()
-                    .replace(R.id.fragmentContainerMainActivity, NotRegisteredFragment.class, null, "regis")
-                    .setReorderingAllowed(true)
-                    .commit();
+            loadNotRegisteredFragment();
+        } else {
+            loadMainMenuFragment();
         }
     }
 
@@ -88,9 +92,20 @@ public class MainActivity extends AppCompatActivity implements ILogConstants {
     }
 
     public void loadMainMenuFragment() {
+        Log.d(LOG_TAG, "load 'main menu' fragment");
         ivMathBook.setVisibility(View.VISIBLE);
         fragmentManager.beginTransaction()
                 .replace(R.id.fragmentContainerMainActivity, MainMenuFragment.class, null, "menu")
+                .setReorderingAllowed(true)
+                .commit();
+    }
+
+    public void loadNotRegisteredFragment() {
+        Log.d(LOG_TAG, "load 'not registered' fragment");
+        setupLogoNotRegisteredText();
+        ivMathBook.setVisibility(View.GONE);
+        fragmentManager.beginTransaction()
+                .replace(R.id.fragmentContainerMainActivity, NotRegisteredFragment.class, null, "regis")
                 .setReorderingAllowed(true)
                 .commit();
     }

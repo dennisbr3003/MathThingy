@@ -20,7 +20,9 @@
             android:layout_height="60dp"
             android:layout_marginTop="24dp"
             android:backgroundTint="@color/holo_blue_dark"
+            android:fontFamily="@font/atma_medium"
             android:text="@string/_addition"
+            android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -31,7 +33,9 @@
             android:layout_height="60dp"
             android:layout_marginTop="16dp"
             android:backgroundTint="@color/holo_blue_dark"
+            android:fontFamily="@font/atma_medium"
             android:text="@string/_subtraction"
+            android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/btnAdd" />
@@ -42,7 +46,9 @@
             android:layout_height="60dp"
             android:layout_marginTop="16dp"
             android:backgroundTint="@color/holo_blue_dark"
+            android:fontFamily="@font/atma_medium"
             android:text="@string/_multiplication"
+            android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/btnSubtract" />
@@ -53,7 +59,9 @@
             android:layout_height="60dp"
             android:layout_marginTop="16dp"
             android:backgroundTint="@color/holo_blue_dark"
+            android:fontFamily="@font/atma_medium"
             android:text="@string/_highscores"
+            android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/btnMultiply" />
@@ -64,7 +72,9 @@
             android:layout_height="60dp"
             android:layout_marginTop="16dp"
             android:backgroundTint="@color/holo_blue_dark"
+            android:fontFamily="@font/atma_medium"
             android:text="@string/_profile"
+            android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/btnHighScores" />
@@ -75,7 +85,9 @@
             android:layout_height="60dp"
             android:layout_marginTop="16dp"
             android:backgroundTint="@color/holo_blue_dark"
+            android:fontFamily="@font/atma_medium"
             android:text="@string/_close"
+            android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/btnGoToRegistration" />

@@ -83,4 +83,5 @@
     <string name="_name">Name</string>
     <string name="_call_sign">Call sign</string>
     <string name="_email_address">E-mail address</string>
+    <string name="_notonline">You do not play online, no score here!</string>
 </resources>

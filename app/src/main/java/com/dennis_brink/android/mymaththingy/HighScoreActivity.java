@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.dennis_brink.android.mymaththingy.gamecore.GameCore;
 import com.dennis_brink.android.mymaththingy.gamecore.Score;
 import com.dennis_brink.android.mymaththingy.gamecore.ScoreSet;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.clans.fab.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -59,6 +60,13 @@ public class HighScoreActivity extends AppCompatActivity implements IGameConstan
             ScoreSet scoreSet = GameCore.getScoreSet();
             Log.d(LOG_TAG, "HighScoreActivity.class: (onCreate) --> " + scoreSet.getScores());
             scoreSetAsArray = scoreSet.getSetAsArray();
+
+            String sBody;
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            sBody = objectMapper.writeValueAsString(scoreSetAsArray);
+            Log.d(LOG_TAG, sBody);
+
             setWinnerTextView(scoreSetAsArray.isEmpty());
         } catch(Exception e){
             Log.d(LOG_TAG, "HighScoreActivity.class: (onCreate) --> " + e.getMessage());
@@ -103,8 +111,15 @@ public class HighScoreActivity extends AppCompatActivity implements IGameConstan
     }
 
     private void setWinnerTextView(boolean emptySet){
-        if (emptySet) txtWinners.setVisibility(View.VISIBLE);
-        else txtWinners.setVisibility(View.INVISIBLE);
+
+        Log.d(LOG_TAG, "empty set ? " + emptySet);
+
+        if (emptySet) {
+            Log.d(LOG_TAG, "no winners tonen? " + emptySet);
+            txtWinners.setVisibility(View.VISIBLE);
+        } else {
+            txtWinners.setVisibility(View.INVISIBLE);
+        }
 //        if (full_list_as_array.isEmpty()){
 //            // show "no winners" textview
 //            txtWinners.setVisibility(View.VISIBLE);
