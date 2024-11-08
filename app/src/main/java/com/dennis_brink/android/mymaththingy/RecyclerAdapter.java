@@ -14,26 +14,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.dennis_brink.android.mymaththingy.gamecore.Score;
 
 import java.util.ArrayList;
-// import java.util.Set;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.HighScoreViewHolder> implements ILogConstants {
 
-    // private Set<HighScore.HighScoreEntry> full_list;
-    // private ArrayList<HighScore.HighScoreEntry> scoreSetAsArrayList;
     private final ArrayList<Score> scoreSetAsArrayList;
     private final ArrayList<Integer> imageList;
-    //private Context context; // for the toaster
-
-//    public RecyclerAdapter(ArrayList<HighScore.HighScoreEntry> scoreSetAsArrayList, ArrayList<Integer> imageList, Context context) {
-//        this.scoreSetAsArrayList = scoreSetAsArrayList;
-//        this.imageList = imageList;
-//        this.context = context;
-//    }
+    private Context context; // for the toaster
 
     public RecyclerAdapter(ArrayList<Score> scoreSetAsArrayList, ArrayList<Integer> imageList, Context context) {
         this.scoreSetAsArrayList = scoreSetAsArrayList;
         this.imageList = imageList;
-        //this.context = context;
+        this.context = context;
     }
 
     @NonNull
@@ -63,6 +54,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.HighSc
             holder.imageRank.setImageResource(imageList.get(position));
             holder.tvGlobalScore.setText(getGlobalScoreText(scoreSetAsArrayList.get(position)));
             holder.tvSynced.setText(getSyncedText(scoreSetAsArrayList.get(position)));
+            holder.tvNotOnline.setVisibility(getScoreIsSyncedOnline(scoreSetAsArrayList.get(position)));
         } catch (Exception e){
             Log.d(LOG_TAG, "RecyclerAdapter.class: (onBindViewHolder) --> " + e.getMessage());
         }
@@ -86,13 +78,20 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.HighSc
         }
     }
 
+    private int getScoreIsSyncedOnline(Score score) {
+        if(score.isGl_loaded()){
+            return View.INVISIBLE; // not visible
+        }
+        return View.VISIBLE; // visible
+    }
+
     @Override
     public int getItemCount() {
         return scoreSetAsArrayList.size();
     }
 
     public static class HighScoreViewHolder extends RecyclerView.ViewHolder {
-        private TextView textViewHighScoreName,textViewDetails,textHighScore,textHighScoreStreaks,textHighScoreTime,tvGlobalScore,tvSynced;
+        private TextView textViewHighScoreName,textViewDetails,textHighScore,textHighScoreStreaks,textHighScoreTime,tvGlobalScore,tvSynced,tvNotOnline;
         private ImageView imageRank;
         public HighScoreViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -106,6 +105,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.HighSc
                 imageRank = itemView.findViewById(R.id.imageRank);
                 tvGlobalScore = itemView.findViewById(R.id.tvGlobalScore);
                 tvSynced = itemView.findViewById(R.id.tvSynced);
+                tvNotOnline = itemView.findViewById(R.id.tvNotOnline);
             } catch (Exception e){
                 Log.d(LOG_TAG, "RecyclerAdapter.class: (HighScoreViewHolder) --> " + e.getMessage());
             }

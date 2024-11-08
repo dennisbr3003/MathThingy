@@ -79,6 +79,8 @@ public class NotRegisteredFragment extends Fragment {
                     } catch (Exception e){
                         Log.d("DENNIS_B", "Game mode (0, 1, 2) not saved " + e.getMessage());
                     }
+
+                    Log.d("DENNIS_B", "Save profile in NotRegisteredFragment.class - saveGameModeAndRun");
                     GameCore.saveDataStructure(profile);
 
                     if(profile.getPlaymode() != 0) {

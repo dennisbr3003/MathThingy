@@ -24,8 +24,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.dennis_brink.android.mymaththingy.gamecore.AppContext;
 import com.dennis_brink.android.mymaththingy.gamecore.GameCore;
 import com.dennis_brink.android.mymaththingy.gamecore.ScoreSet;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.Objects;
@@ -66,7 +68,7 @@ public class ResultActivity extends AppCompatActivity implements IGameConstants,
         GameCore.saveDataStructure(scoreSet);
 
         Log.d(LOG_TAG, "ResultActivity.class: Key for ranking NEW " + scoreKey);
-        Log.d(LOG_TAG, "ResultActivity.class: Rank NEW " + player_rank);
+        Log.d(LOG_TAG, "ResultActivity.class: RankSet NEW " + player_rank);
 
         // dialog here
         if(player_rank != -1) {
@@ -150,13 +152,12 @@ public class ResultActivity extends AppCompatActivity implements IGameConstants,
     public void processHighScoreName(String name, String key) {
 
         Log.d(LOG_TAG, String.format("ResultActivity.class: (processHighScoreName) update high score entry with name %s and key %s", name, key));
-        //highScore = new HighScore(ResultActivity.this, HIGHSCORE_LISTLENGTH);
-        //highScore.setPlayerName(key, name);
-        //highScore.printSet();
 
         scoreSet = GameCore.getScoreSet();
         scoreSet.setPlayerName(key, name);
         GameCore.saveDataStructure(scoreSet);
+
+        GameCore.getGlobalRanking();
 
         try {
             showSnackBar();

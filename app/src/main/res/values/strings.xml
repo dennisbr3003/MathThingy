@@ -84,4 +84,8 @@
     <string name="_call_sign">Call sign</string>
     <string name="_email_address">E-mail address</string>
     <string name="_notonline">You do not play online, no score here!</string>
+    <string name="_offline">Don\'t want to play online anymore ??</string>
+    <string name="_explanation">No worries, just uncheck <b>\"Compete online\"</b> right above me and hit <b>\"Save\"</b> below. All your online data, if any, will be deleted.\nYour local data will be save and untouched and that, of course, includes your precious <b>HIGH SCORES</b>.\nYou can go back online and compete at any time. Just check <b>\"Compete online\"</b> and hit <b>\"Save\"</b>. Soon enough you will be calculating the competition to another galaxy!.👌</string>
+    <string name="_online">Why not start playing online !?</string>
+    <string name="_onLineExplanation">Just check <b>\"Compete online\"</b> right above me and hit <b>\"Save\"</b> below. Your already achieved <b>HIGH SCORES</b> will be submitted to the internet and you start competing and flexing your calculation skills 🤓 immediately.\nHad enough? Just uncheck <b>\"Compete online\"</b> and hit <b>\"Save\"</b>. Your online presence will be deleted completely, your local data will <b>not</b>.🙂</string>
 </resources>

@@ -34,7 +34,6 @@ public class HighScoreActivity extends AppCompatActivity implements IGameConstan
     private ArrayList<Score> scoreSetAsArray;
     private TextView txtWinners;
     Receiver receiver = null;
-
     private FloatingActionButton floatingActionButton;
 
     @Override
@@ -46,14 +45,8 @@ public class HighScoreActivity extends AppCompatActivity implements IGameConstan
 
         floatingActionButton = findViewById(R.id.fabDelete);
         txtWinners = findViewById(R.id.txtNoWinners);
-//        highScore = new HighScore(HighScoreActivity.this, HIGHSCORE_LISTLENGTH);
-//
-//        try {
-//            full_list_as_array = highScore.getSetAsArray();
-//            //setWinnerTextView(full_list_as_array);
-//        } catch(Exception e){
-//            Log.d(LOG_TAG, "HighScoreActivity.class: (onCreate) --> " + e.getMessage());
-//        }
+
+        GameCore.getGlobalRanking();
 
         try {
 
@@ -120,12 +113,6 @@ public class HighScoreActivity extends AppCompatActivity implements IGameConstan
         } else {
             txtWinners.setVisibility(View.INVISIBLE);
         }
-//        if (full_list_as_array.isEmpty()){
-//            // show "no winners" textview
-//            txtWinners.setVisibility(View.VISIBLE);
-//        } else {
-//            txtWinners.setVisibility(View.INVISIBLE);
-//        }
     }
 
     @SuppressLint("NotifyDataSetChanged")

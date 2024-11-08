@@ -1,14 +1,20 @@
 package com.dennis_brink.android.mymaththingy.gamecore;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
 import android.util.Log;
+
+import com.dennis_brink.android.mymaththingy.WebClient;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Calendar;
+import java.util.Locale;
 import java.util.Objects;
 
 public class GameCore extends Application implements IGameCore {
@@ -35,6 +41,30 @@ public class GameCore extends Application implements IGameCore {
             scores = new ScoreSet();
         }
         return scores;
+    }
+
+    @SuppressLint("DefaultLocale")
+    static String getCurrentDisplayDateTime() {
+        Calendar localDateTime = Calendar.getInstance(Locale.getDefault());
+
+        return String.format("%02d/%02d/%04d %02d:%02d",
+                localDateTime.get(Calendar.DAY_OF_MONTH),
+                localDateTime.get(Calendar.MONTH) + 1, // 0-based, january = month 0
+                localDateTime.get(Calendar.YEAR),
+                localDateTime.get(Calendar.HOUR_OF_DAY),
+                localDateTime.get(Calendar.MINUTE));
+    }
+
+    public static void getGlobalRanking() {
+        WebClient webClient = new WebClient(AppContext.getContext());
+        webClient.initWebClient();
+
+        try {
+            webClient.uploadSubSet();
+        } catch (JsonProcessingException e) {
+            // sendRegistrationFailure( e.getMessage());
+            Log.d("DENNIS_B", "error using webclient " + e.getMessage());
+        }
     }
 
     public static void saveDataStructure(DataStructure dataStructure) {

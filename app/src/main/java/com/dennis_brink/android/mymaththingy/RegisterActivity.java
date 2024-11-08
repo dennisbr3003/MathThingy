@@ -84,6 +84,8 @@ public class RegisterActivity extends AppCompatActivity implements IRegisterActi
 
         Profile profile = GameCore.getProfile();
         profile.setPlaymode(2);
+
+        Log.d("DENNIS_B", "Save profile in RegisterActivity.class - onlineRegistrationSuccess");
         GameCore.saveDataStructure(profile);
 
         fragmentManager.beginTransaction()
@@ -113,6 +115,7 @@ public class RegisterActivity extends AppCompatActivity implements IRegisterActi
         Profile profile = GameCore.getProfile();
         profile.setRegistered(true);
         profile.setShowRegistrationFragment(false);
+        Log.d("DENNIS_B", "Save profile in RegisterActivity.class");
         GameCore.saveDataStructure(profile);
 
         fragmentManager.beginTransaction()

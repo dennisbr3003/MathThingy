@@ -31,13 +31,15 @@ public class MainActivity extends AppCompatActivity implements ILogConstants {
 
         setContentView(R.layout.activity_main);
 
+        GameCore.getGlobalRanking();
+
         ivMathBook = findViewById(R.id.ivMathBook);
 
         setupLogo();
         getSupportFragmentManager().popBackStack();
         loadMainMenuFragment();
 
-        Log.d(LOG_TAG, GameCore.getScoreSet().toString());
+        Log.d(LOG_TAG, GameCore.getScoreSet().getSubSetAsArray().toString());
 
     }
 

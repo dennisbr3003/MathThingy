@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -53,6 +54,14 @@ public class ScoreSet extends DataStructure implements Serializable, IGameCore {
         return rank.get();
     }
 
+    public ArrayList<Score> getSubSetAsArray() {
+        ArrayList<Score> subset = new ArrayList<>();
+        this.scores.forEach((x)->{
+            if(!x.isGl_loaded()) subset.add(x);
+        });
+        return subset;
+    }
+
     public void setPlayerName(String key, String name) {
         scores.forEach(score -> {
             if(score.getId().equals(key)){
@@ -60,8 +69,21 @@ public class ScoreSet extends DataStructure implements Serializable, IGameCore {
             }
         });
     }
+
     public ArrayList<Score> getSetAsArray() {
         return new ArrayList<>(scores);
+    }
+
+    public void updateScoreSetByRanking(RankSet rankSet)  {
+        rankSet.getResult().forEach((rank) -> {
+            scores.forEach(score -> {
+                if(score.getId().equals(rank.getId())){
+                    score.setGl_rank(rank.getGlRank());
+                    score.setGl_loaded(true);
+                    score.setGl_sync(GameCore.getCurrentDisplayDateTime());
+                }
+            });
+        });
     }
 
     @NonNull

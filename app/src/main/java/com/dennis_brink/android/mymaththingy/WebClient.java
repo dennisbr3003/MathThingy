@@ -7,15 +7,23 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.dennis_brink.android.mymaththingy.gamecore.GameCore;
+import com.dennis_brink.android.mymaththingy.gamecore.Hmac;
 import com.dennis_brink.android.mymaththingy.gamecore.Player;
+import com.dennis_brink.android.mymaththingy.gamecore.RankSet;
+import com.dennis_brink.android.mymaththingy.gamecore.ScoreSet;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Objects;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -41,7 +49,7 @@ public class WebClient implements IRegistrationConstants {
             getApiConfiguration();
         } catch (IOException e) {
             this.isOperational = false;
-            Log.d("DB1", "Error WebClient.WebClient(): " + e.getMessage());
+            Log.d("DENNIS_B", "Error WebClient.WebClient(): " + e.getMessage());
         }
         this.isOperational = true;
     }
@@ -71,6 +79,93 @@ public class WebClient implements IRegistrationConstants {
         this.apiUrl = apiConfiguration.getUrl();
     }
 
+    public void uploadSubSet() throws JsonProcessingException {
+
+        Player player = GameCore.getPlayer();
+        ScoreSet scoreSet = GameCore.getScoreSet();
+
+        OkHttpClient okHttpClient = new OkHttpClient();
+        String sBody;
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        sBody = objectMapper.writeValueAsString(scoreSet.getSubSetAsArray());
+
+        Log.d("DENNIS_B", "uploadSubSetBody " + sBody);
+
+        RequestBody body = RequestBody.create(sBody, JSON);
+
+        try {
+            Log.d("DENNIS_B", "token " +  Hmac.generateHmacSha256(this.apiKey, this.apiApp + "." + player.getDeviceId(), true));
+        } catch (Exception e) {
+            Log.d("DENNIS_B", "Error " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+
+        Request request = null;
+        try {
+            request = new Request.Builder()
+                    .header("token", Hmac.generateHmacSha256(this.apiKey, this.apiApp + "." + player.getDeviceId(), true))
+                    .header("device", player.getDeviceId())
+                    .post(body)
+                    .url(String.format("%s/score", this.apiUrl))
+                    .build();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                Log.d("DENNIS_B", "Retrieval of ranking failed " + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+
+                JSONObject jsonObject;
+                RankSet rankSet = null;
+                if(response.isSuccessful()) {
+                    try {
+                        jsonObject = new JSONObject(Objects.requireNonNull(response.body()).string());
+                        try {
+                            ObjectMapper mapper = new ObjectMapper();
+                            rankSet = mapper.readValue(jsonObject.toString(), RankSet.class);
+                        } catch(Exception e){
+                            Log.d("DENNIS_B", "conversion response to POJO failed " + e.getMessage());
+                        }
+
+                    } catch (JSONException e) {
+                        Log.d("DENNIS_B", "conversion response to JSON failed " + e.getMessage());
+                        throw new RuntimeException(e);
+                    }
+                    if (rankSet != null) {
+                        Log.d("DENNIS_B", "goed gegaan " + rankSet.toString());
+                        ScoreSet scoreSet = GameCore.getScoreSet();
+                        scoreSet.updateScoreSetByRanking(rankSet);
+                        GameCore.saveDataStructure(scoreSet);
+                        Log.d("DENNIS_B", "Alles bijgewerkt --> check highscores ? ");
+                    }else {
+                        Log.d("DENNIS_B", "rankSet blijkt niet gevuld");
+                    }
+                    // send something to mainactivity so it can update the scores
+                } else {
+                    // retrieve custom message sent from the API if any. If there is a custom message
+                    // it must have the structure like this { type: <http code>, message: <message> }
+                    if(response.body()!=null) {
+//                        ObjectMapper mapper = new ObjectMapper();
+//                        JsonNode jsonNode = mapper.readTree(response.body().string());
+//                        sendRegistrationFailure(jsonNode.get("type").asText() + " " + jsonNode.get("message").asText());
+                        Log.d("DENNIS_B", "NIET goed gegaan " + response.toString());
+                    } else {
+//                        sendRegistrationFailure(response.code() + " " + response.message());
+                        Log.d("DENNIS_B", "NIET goed gegaan ZONDER response" );
+                    }
+                }
+            }
+        });
+
+    }
+
     public void savePlayer(Player player) throws JsonProcessingException {
 
         OkHttpClient okHttpClient = new OkHttpClient();
@@ -79,12 +174,12 @@ public class WebClient implements IRegistrationConstants {
         ObjectMapper objectMapper = new ObjectMapper();
         sBody = objectMapper.writeValueAsString(player);
 
-        Log.d("DB1", sBody);
+        Log.d("DENNIS_B", sBody);
 
         RequestBody body = RequestBody.create(sBody, JSON);
 
         try {
-            Log.d("DB1", "token " +  Hmac.generateHmacSha256(this.apiKey, this.apiApp + "." + player.getDeviceId(), true));
+            Log.d("DENNIS_B", "token " +  Hmac.generateHmacSha256(this.apiKey, this.apiApp + "." + player.getDeviceId(), true));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -95,7 +190,7 @@ public class WebClient implements IRegistrationConstants {
                     .header("token", Hmac.generateHmacSha256(this.apiKey, this.apiApp + "." + player.getDeviceId(), true))
                     .header("device", player.getDeviceId())
                     .post(body)
-                    .url(this.apiUrl)
+                    .url(String.format("%s/player", this.apiUrl))
                     .build();
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -104,7 +199,7 @@ public class WebClient implements IRegistrationConstants {
         okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                Log.d("DB1", "Error: " + e.getMessage());
+                Log.d("DENNIS_B", "Error: " + e.getMessage());
                 sendRegistrationFailure(e.getMessage());
             }
 

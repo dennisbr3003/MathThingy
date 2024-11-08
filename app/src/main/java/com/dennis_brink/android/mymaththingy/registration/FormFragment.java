@@ -11,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -35,6 +36,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class FormFragment extends Fragment implements AdapterView.OnItemSelectedListener, IRegistrationConstants {
     WebClient webClient;
     Button btnRegisterNow;
+    TextView tvOfflineTitle, tvOfflineExplanation;
     EditText etDisplayName, etCallSign, etEmailAddress;
     CheckBox cbCompeteOnline;
     TextView tvCurrentSetting;
@@ -70,7 +72,8 @@ public class FormFragment extends Fragment implements AdapterView.OnItemSelected
         etCallSign = v.findViewById(R.id.etCallSign);
         etEmailAddress = v.findViewById(R.id.etEmailAddress);
         tvCurrentSetting = v.findViewById(R.id.tvCurrentSetting);
-
+        tvOfflineTitle = v.findViewById(R.id.tvOfflineTitle);
+        tvOfflineExplanation = v.findViewById(R.id.tvOfflineExplanation);
         player = GameCore.getPlayer();
         profile = GameCore.getProfile();
 
@@ -85,12 +88,23 @@ public class FormFragment extends Fragment implements AdapterView.OnItemSelected
 
         btnRegisterNow.setOnClickListener(view -> saveRegistration());
 
+        cbCompeteOnline.setOnClickListener(view -> {
+            if(cbCompeteOnline.isChecked()){
+                tvOfflineTitle.setText(R.string._offline);
+                tvOfflineExplanation.setText(R.string._explanation);
+            } else {
+                tvOfflineTitle.setText(R.string._online);
+                tvOfflineExplanation.setText(R.string._onLineExplanation);
+            }
+        });
+
         // needed when you press back and the timer is not finished we have to stop the timer from
         // running in the background and executing an automated back press, this would close the app
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
                 // custom stuff here
+                Log.d("DENNIS_B", "Save profile in FormFragment.class - handleOnBackPress");
                 checkGamePlayMode();
                 GameCore.saveDataStructure(profile);
                 requireActivity().finish(); // invoking back press proved unstable
@@ -106,7 +120,9 @@ public class FormFragment extends Fragment implements AdapterView.OnItemSelected
             profile.setPlaymode(0); // anonymously
             profile.setCompeteOnline(false);
         } else {
-            profile.setPlaymode(1); // locally
+            if(!profile.isRegistered()) { // in case of back press after registration. Do not reset the play mode
+                profile.setPlaymode(1); // locally
+            }
         }
     }
 
@@ -124,6 +140,8 @@ public class FormFragment extends Fragment implements AdapterView.OnItemSelected
         checkGamePlayMode();
 
         profile.setCompeteOnline(cbCompeteOnline.isChecked());
+
+        Log.d("DENNIS_B", "Save profile in FormFragment.class - saveRegistration");
         GameCore.saveDataStructure(profile);
 
         if(!cbCompeteOnline.isChecked()){
