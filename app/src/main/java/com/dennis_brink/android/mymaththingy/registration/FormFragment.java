@@ -163,10 +163,13 @@ public class FormFragment extends Fragment implements AdapterView.OnItemSelected
         // with 1 second with a runnable and a handler
         handler = new Handler();
         runnable = () -> {
-            try {
-                webClient.savePlayer(player);
-            } catch (JsonProcessingException e) {
-                sendRegistrationFailure( e.getMessage());
+            if(cbCompeteOnline.isChecked()) webClient.savePlayerAndScores(player);
+            else {
+                try {
+                    webClient.deletePlayerAndScores(player);
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
             }
         };
         handler.postDelayed(runnable, 1000);
