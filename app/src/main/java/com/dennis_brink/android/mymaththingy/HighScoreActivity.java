@@ -16,9 +16,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dennis_brink.android.mymaththingy.gamecore.GameCore;
+import com.dennis_brink.android.mymaththingy.gamecore.Profile;
 import com.dennis_brink.android.mymaththingy.gamecore.Score;
 import com.dennis_brink.android.mymaththingy.gamecore.ScoreSet;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.clans.fab.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -27,10 +27,9 @@ import java.util.Objects;
 public class HighScoreActivity extends AppCompatActivity implements IGameConstants, IHighScoreDeleteListener, ILogConstants {
 
     HighScore highScore;
-    private RecyclerView recyclerView;
     private RecyclerAdapter adapter;
     private final ArrayList<Integer> imageList = new ArrayList<>();
-    private ArrayList<HighScore.HighScoreEntry> full_list_as_array = null;
+    // private ArrayList<HighScore.HighScoreEntry> full_list_as_array = null;
     private ArrayList<Score> scoreSetAsArray;
     private TextView txtWinners;
     Receiver receiver = null;
@@ -46,26 +45,27 @@ public class HighScoreActivity extends AppCompatActivity implements IGameConstan
         floatingActionButton = findViewById(R.id.fabDelete);
         txtWinners = findViewById(R.id.txtNoWinners);
 
-        GameCore.getGlobalRanking();
+        Profile profile = GameCore.getProfile();
+        if(profile.isCompeteOnline()) GameCore.getGlobalRanking();
 
         try {
 
             ScoreSet scoreSet = GameCore.getScoreSet();
             Log.d(LOG_TAG, "HighScoreActivity.class: (onCreate) --> " + scoreSet.getScores());
-            scoreSetAsArray = scoreSet.getSetAsArray();
+            scoreSetAsArray = scoreSet.getTop10AsArray();
 
-            String sBody;
-
-            ObjectMapper objectMapper = new ObjectMapper();
-            sBody = objectMapper.writeValueAsString(scoreSetAsArray);
-            Log.d(LOG_TAG, sBody);
+//            String sBody;
+//
+//            ObjectMapper objectMapper = new ObjectMapper();
+//            sBody = objectMapper.writeValueAsString(scoreSetAsArray);
+//            Log.d(LOG_TAG, sBody);
 
             setWinnerTextView(scoreSetAsArray.isEmpty());
         } catch(Exception e){
             Log.d(LOG_TAG, "HighScoreActivity.class: (onCreate) --> " + e.getMessage());
         }
 
-        recyclerView = findViewById(R.id.recyclerView);
+        RecyclerView recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(HighScoreActivity.this, LinearLayoutManager.VERTICAL, false)); // horizontal
 
         loadImageList();
@@ -75,14 +75,11 @@ public class HighScoreActivity extends AppCompatActivity implements IGameConstan
         recyclerView.setAdapter(adapter);
 
 
-        floatingActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // show dialog
-                if (!scoreSetAsArray.isEmpty()) {
-                    AlertDialog dlg = DialogWrapper.getDeleteConfirmDialog(HighScoreActivity.this);
-                    Objects.requireNonNull(dlg).show();
-                }
+        floatingActionButton.setOnClickListener(v -> {
+            // show dialog
+            if (!scoreSetAsArray.isEmpty()) {
+                AlertDialog dlg = DialogWrapper.getDeleteConfirmDialog(HighScoreActivity.this);
+                Objects.requireNonNull(dlg).show();
             }
         });
 
@@ -119,9 +116,14 @@ public class HighScoreActivity extends AppCompatActivity implements IGameConstan
     @Override
     public void deleteHighScoreList() {
 
-        full_list_as_array.clear(); // clear the high score arraylist used in the activity
+        // full_list_as_array.clear(); // clear the high score arraylist used in the activity
+        scoreSetAsArray.clear();
         Log.d(LOG_TAG, "HighScoreActivity.class: (deleteHighScoreList) Local arraylist cleared");
-        highScore.clearSet(); // clear the TreeSet and save it to file
+        //highScore.clearSet(); // clear the TreeSet and save it to file
+        ScoreSet scoreSet = GameCore.getScoreSet();
+        scoreSet.clearScoreSet();
+        Log.d(LOG_TAG, scoreSet.toString());
+        GameCore.saveDataStructure(scoreSet);
         Log.d(LOG_TAG, "HighScoreActivity.class: (deleteHighScoreList) Saved TreeSet cleared and written");
         adapter.notifyDataSetChanged();  // notify adapter to refresh itself
         Log.d(LOG_TAG, "HighScoreActivity.class: (deleteHighScoreList) Adapter notified of changes in data");

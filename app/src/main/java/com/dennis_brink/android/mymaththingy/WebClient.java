@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import com.dennis_brink.android.mymaththingy.gamecore.GameCore;
 import com.dennis_brink.android.mymaththingy.gamecore.Hmac;
 import com.dennis_brink.android.mymaththingy.gamecore.Player;
+import com.dennis_brink.android.mymaththingy.gamecore.Profile;
 import com.dennis_brink.android.mymaththingy.gamecore.RankSet;
 import com.dennis_brink.android.mymaththingy.gamecore.ScoreSet;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -59,8 +60,8 @@ public class WebClient implements IRegistrationConstants, ILogConstants {
 
     private void getApiConfiguration() throws IOException {
 
-        String sCharacter = "";
-        InputStream inputStream = null;
+        String sCharacter;
+        InputStream inputStream;
         ApiConfiguration apiConfiguration;
 
         AssetManager assetManager = this.context.getAssets();
@@ -82,7 +83,7 @@ public class WebClient implements IRegistrationConstants, ILogConstants {
         this.apiUrl = apiConfiguration.getUrl();
     }
 
-    public void uploadSubSet() throws JsonProcessingException {
+    public void saveScores() throws JsonProcessingException {
 
         long start = System.currentTimeMillis();
 
@@ -97,7 +98,7 @@ public class WebClient implements IRegistrationConstants, ILogConstants {
 
         RequestBody body = RequestBody.create(sBody, JSON);
 
-        Request request = null;
+        Request request;
         try {
             request = new Request.Builder()
                     .header("token", Hmac.generateHmacSha256(this.apiKey, this.apiApp + "." + player.getDeviceId(), true))
@@ -114,7 +115,7 @@ public class WebClient implements IRegistrationConstants, ILogConstants {
         okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                Log.d(LOG_TAG, "WebClient uploadSubSet() - Retrieval of ranking failed " + e.getMessage());
+                Log.d(LOG_TAG, "WebClient saveScores() - Retrieval of ranking failed " + e.getMessage());
                 sendRegistrationFailure(countDownLatch==null, e.getMessage());
                 decreaseCountDownLatch();
             }
@@ -123,7 +124,7 @@ public class WebClient implements IRegistrationConstants, ILogConstants {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
 
                 JSONObject jsonObject;
-                RankSet rankSet = null;
+                RankSet rankSet;
 
                 if(response.isSuccessful()) {
                     try {
@@ -136,7 +137,7 @@ public class WebClient implements IRegistrationConstants, ILogConstants {
                             GameCore.saveDataStructure(scoreSet);
                         }
                     } catch (Exception e) {
-                        Log.d(LOG_TAG, "WebClient uploadSubSet() - processing conversion response to JSON failed " + e.getMessage());
+                        Log.d(LOG_TAG, "WebClient saveScores() - processing conversion response to JSON failed " + e.getMessage());
                         sendRegistrationFailure(countDownLatch==null, e.getMessage());
                         decreaseCountDownLatch();
                         throw new RuntimeException(e);
@@ -144,7 +145,7 @@ public class WebClient implements IRegistrationConstants, ILogConstants {
                     sendRegistrationSuccess(countDownLatch==null);
                     decreaseCountDownLatch();
                     long end = System.currentTimeMillis();
-                    Log.d(LOG_TAG, "WebClient uploadSubSet() - success ("+ (end - start) + "ms)");
+                    Log.d(LOG_TAG, "WebClient saveScores() - success ("+ (end - start) + "ms)");
 
                 } else {
                     // retrieve custom message sent from the API if any. If there is a custom message
@@ -154,7 +155,7 @@ public class WebClient implements IRegistrationConstants, ILogConstants {
                         JsonNode jsonNode = mapper.readTree(response.body().string());
                         sendRegistrationFailure(countDownLatch==null, jsonNode.get("type").asText() + " " + jsonNode.get("message").asText());
                     } else{
-                        sendRegistrationFailure(countDownLatch==null, "500 WebClient.uploadSubSet() - Response is null");
+                        sendRegistrationFailure(countDownLatch==null, "500 WebClient.saveScores() - Response is null");
                     }
                     decreaseCountDownLatch();
                 }
@@ -175,7 +176,7 @@ public class WebClient implements IRegistrationConstants, ILogConstants {
 
         RequestBody body = RequestBody.create(sBody, JSON);
 
-        Request request = null;
+        Request request;
         try {
             request = new Request.Builder()
                     .header("token", Hmac.generateHmacSha256(this.apiKey, this.apiApp + "." + player.getDeviceId(), true))
@@ -220,12 +221,12 @@ public class WebClient implements IRegistrationConstants, ILogConstants {
         });
     }
 
-    public void savePlayerAndScores(Player player) {
+    public void savePlayerAndScores(Player player, Profile profile) {
 
         // we only get the player as a param
         // Values can be entered in the form this is called from
         // the scores we get from the app itself that may be there or they may not
-        // Scores are handled in 'uploadSubSet()'
+        // Scores are handled in 'saveScores()'
         try {
 
             long start = System.currentTimeMillis();
@@ -234,42 +235,45 @@ public class WebClient implements IRegistrationConstants, ILogConstants {
             countDownLatch = new CountDownLatch(2); // create instance for 2 calls
 
             ex.submit(new Thread(() -> {
-                try {
+               try {
                     savePlayer(player);
                 } catch (Exception e) {
-                    sendRegistrationFailure(countDownLatch!=null, e.getMessage());
+                   Log.d(LOG_TAG, "SavePlayer (thread 1) Exception occurred " + e.getMessage());
+//                    sendRegistrationFailure(countDownLatch!=null, e.getMessage());
                 }
             }));
             ex.submit(new Thread(() -> {
                 try {
-                    uploadSubSet();
+                    saveScores();
                 } catch (Exception e) {
-                    sendRegistrationFailure(countDownLatch!=null, e.getMessage());
+                    // sendRegistrationFailure(countDownLatch!=null, e.getMessage());
+                    Log.d(LOG_TAG, "SaveScores (thread 2) Exception occurred " + e.getMessage());
                 }
             }));
             Log.d(LOG_TAG, "WebClient.savePlayerAndScores() - Awaiting numbers of threads: " + countDownLatch.getCount());
             ex.shutdown(); // starts processing threads
             try {
                 countDownLatch.await();
+                long end = System.currentTimeMillis();
+                Log.d(LOG_TAG, "WebClient.savePlayerAndScores() - Executed in " + (end - start) + "ms");
+                GameCore.saveDataStructure(player);
+                GameCore.saveDataStructure(profile);
+                sendRegistrationSuccess(countDownLatch!=null);
             } catch (InterruptedException e) {
                 sendRegistrationFailure(countDownLatch!=null, "500 WebClient.savePlayerAndScores() - " + e.getMessage());
             }
-            long end = System.currentTimeMillis();
-            Log.d(LOG_TAG, "WebClient.savePlayerAndScores() - Executed in " + (end - start) + "ms");
-
-            sendRegistrationSuccess(countDownLatch!=null);
         } finally{
             countDownLatch = null;
         }
 
     }
 
-    public void deletePlayerAndScores(Player player) throws JsonProcessingException {
+    public void deletePlayerAndScores(Player player, Profile profile) {
         long start = System.currentTimeMillis();
 
         OkHttpClient okHttpClient = new OkHttpClient();
 
-        Request request = null;
+        Request request;
         try {
             request = new Request.Builder()
                     .header("token", Hmac.generateHmacSha256(this.apiKey, this.apiApp + "." + player.getDeviceId(), true))
@@ -286,7 +290,7 @@ public class WebClient implements IRegistrationConstants, ILogConstants {
         okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                Log.d(LOG_TAG, "WebClient deletePlayerAndScores() - 'forget me request' failed " + e.getMessage());
+                Log.d(LOG_TAG, "WebClient deletePlayerAndScores() - 'forget me request' failed no changes where made" + e.getMessage());
                 sendRegistrationFailure(countDownLatch==null, e.getMessage());
                 decreaseCountDownLatch();
             }
@@ -294,10 +298,19 @@ public class WebClient implements IRegistrationConstants, ILogConstants {
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if(response.isSuccessful()) {
-                    sendRegistrationSuccess(countDownLatch==null);
-                    decreaseCountDownLatch();
                     long end = System.currentTimeMillis();
                     Log.d(LOG_TAG, "WebClient deletePlayerAndScores() - 'forget me request' success ("+ (end - start) + "ms)");
+
+                    GameCore.saveDataStructure(player);
+                    GameCore.saveDataStructure(profile);
+
+                    // remove global data from score set
+                    ScoreSet scoreSet = GameCore.getScoreSet();
+                    scoreSet.removeGlobalRanking();
+                    GameCore.saveDataStructure(scoreSet);
+
+                    sendRegistrationSuccess(countDownLatch==null);
+                    decreaseCountDownLatch();
                 } else {
                     // retrieve custom message sent from the API if any. If there is a custom message
                     // it must have the structure like this { type: <http code>, message: <message> }

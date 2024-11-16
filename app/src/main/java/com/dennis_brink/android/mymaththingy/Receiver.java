@@ -33,15 +33,15 @@ public class Receiver extends BroadcastReceiver implements IGameConstants, ILogC
 
         Log.d(LOG_TAG, "Receiver.class: (onReceive) Receiver reached with action " + intent.getAction());
 
-        if(intent.getAction().equals(HIGHSCORE_ACTION)) {
-
-            Log.d(LOG_TAG, "Receiver.class: (onReceive) High score name received " + intent.getStringExtra(HIGHSCORE_ACTION));
-            Log.d(LOG_TAG, "Receiver.class: (onReceive) High score key received " + intent.getStringExtra(HIGHSCORE_KEY));
-
-            if (highScoreDialogListener != null) {
-                highScoreDialogListener.processHighScoreName(intent.getStringExtra(HIGHSCORE_ACTION), intent.getStringExtra(HIGHSCORE_KEY));
-            }
-        }
+//        if(intent.getAction().equals(HIGHSCORE_ACTION)) {
+//
+//            Log.d(LOG_TAG, "Receiver.class: (onReceive) High score name received " + intent.getStringExtra(HIGHSCORE_ACTION));
+//            Log.d(LOG_TAG, "Receiver.class: (onReceive) High score key received " + intent.getStringExtra(HIGHSCORE_KEY));
+//
+//            if (highScoreDialogListener != null) {
+//                highScoreDialogListener.processHighScoreName(intent.getStringExtra(HIGHSCORE_ACTION), intent.getStringExtra(HIGHSCORE_KEY));
+//            }
+//        }
 
         if(intent.getAction().equals(HIGHSCORE_DELETE_ACTION)) {
             if (highScoreDeleteListener != null) {

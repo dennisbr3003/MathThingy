@@ -11,7 +11,6 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -28,7 +27,6 @@ import com.dennis_brink.android.mymaththingy.IRegistrationConstants;
 import com.dennis_brink.android.mymaththingy.spinner.LanguageSpinnerItem;
 import com.dennis_brink.android.mymaththingy.R;
 import com.dennis_brink.android.mymaththingy.WebClient;
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -85,21 +83,16 @@ public class FormFragment extends Fragment implements AdapterView.OnItemSelected
         etEmailAddress.setText(player.getEmail());
 
         cbCompeteOnline.setChecked(profile.isCompeteOnline());
+        setOnlineOfflineText();
 
         btnRegisterNow.setOnClickListener(view -> saveRegistration());
 
         cbCompeteOnline.setOnClickListener(view -> {
-            if(cbCompeteOnline.isChecked()){
-                tvOfflineTitle.setText(R.string._offline);
-                tvOfflineExplanation.setText(R.string._explanation);
-            } else {
-                tvOfflineTitle.setText(R.string._online);
-                tvOfflineExplanation.setText(R.string._onLineExplanation);
-            }
+            setOnlineOfflineText();
         });
 
         // needed when you press back and the timer is not finished we have to stop the timer from
-        // running in the background and executing an automated back press, this would close the app
+        // running in the background and executing an automated back press, this would close the app :(
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
@@ -128,23 +121,33 @@ public class FormFragment extends Fragment implements AdapterView.OnItemSelected
 
     private void saveRegistration() {
 
+        boolean useWebClient = false;
+
         LanguageSpinnerItem languageSpinnerItem = (LanguageSpinnerItem) spin.getSelectedItem();
 
         player.setCallSign(etCallSign.getText().toString());
         player.setDisplayName(etDisplayName.getText().toString());
         player.setEmail(etEmailAddress.getText().toString());
         player.setLanguage(languageSpinnerItem.getIsoCode());
-        GameCore.saveDataStructure(player);
 
         // no data = anonymously, otherwise you play locally
         checkGamePlayMode();
 
+        if (profile.isCompeteOnline() || cbCompeteOnline.isChecked()) {
+            // currently we are online so we need to check values online
+            // 1. if isCompeteOnLine is true but cbCompeteOnline = unchecked we need delete online values
+            // 2. if isCompeteOnLine is true and cbCompeteOnline = checked we need to update online values
+            // 3. if isCompeteOnLine is false but cbCompeteOnline = checked we need upload local values
+            // 4. if isCompeteOnLine is false and cbCompeteOnline = unchecked we need to save locally
+            useWebClient = true;
+        }
+
         profile.setCompeteOnline(cbCompeteOnline.isChecked());
 
-        Log.d("DENNIS_B", "Save profile in FormFragment.class - saveRegistration");
-        GameCore.saveDataStructure(profile);
-
-        if(!cbCompeteOnline.isChecked()){
+        if(!useWebClient){
+            // save any changes and updates locally
+            GameCore.saveDataStructure(player);
+            GameCore.saveDataStructure(profile);
             sendRegistrationSuccess();
             return;
         }
@@ -155,22 +158,19 @@ public class FormFragment extends Fragment implements AdapterView.OnItemSelected
                 .replace(R.id.fragmentContainerView, ProgressFragment.class, null)
                 .commit();
 
-        // We need to show the progress fragment everytime we save something with teh API.
+        // We need to show the progress fragment everytime we save something with the API.
         // If the API is not online a time out will occur after 10 seconds. To avoid the user
         // thinking the app is crashing we show a progress bar running. A successful result (API
         // is online and the save is successful) is THAT fast that showing the progress fragment
         // without a delay looks like a flickering. Hence we delay execution of the actual save
-        // with 1 second with a runnable and a handler
+        // with 1 second with a runnable and a handler. If the online action is completed we update
+        // player and profile. To do so we send the object to the webclient which handles API calls
+        // and knows if a call ended successfully or not
+
         handler = new Handler();
         runnable = () -> {
-            if(cbCompeteOnline.isChecked()) webClient.savePlayerAndScores(player);
-            else {
-                try {
-                    webClient.deletePlayerAndScores(player);
-                } catch (JsonProcessingException e) {
-                    throw new RuntimeException(e);
-                }
-            }
+            if(cbCompeteOnline.isChecked()) webClient.savePlayerAndScores(player, profile);
+            else webClient.deletePlayerAndScores(player, profile);
         };
         handler.postDelayed(runnable, 1000);
     }
@@ -197,12 +197,12 @@ public class FormFragment extends Fragment implements AdapterView.OnItemSelected
         requireActivity().sendBroadcast(i);
     }
 
-    private void sendRegistrationFailure(String msg) {
-        Intent i = new Intent();
-        i.setAction(LOCAL_REGISTRATION_FAILURE);
-        i.putExtra("MSG", msg);
-        requireActivity().sendBroadcast(i);
-    }
+//    private void sendRegistrationFailure(String msg) {
+//        Intent i = new Intent();
+//        i.setAction(LOCAL_REGISTRATION_FAILURE);
+//        i.putExtra("MSG", msg);
+//        requireActivity().sendBroadcast(i);
+//    }
 
     private void setGamePlayModeText(){
         switch(profile.getPlaymode()) {
@@ -215,6 +215,16 @@ public class FormFragment extends Fragment implements AdapterView.OnItemSelected
             case 2:
                 tvCurrentSetting.setText(getResources().getString(R.string._current_play_mode,ONLINE));
                 break;
+        }
+    }
+
+    private void setOnlineOfflineText(){
+        if(cbCompeteOnline.isChecked()){
+            tvOfflineTitle.setText(R.string._offline);
+            tvOfflineExplanation.setText(R.string._explanation);
+        } else {
+            tvOfflineTitle.setText(R.string._online);
+            tvOfflineExplanation.setText(R.string._onLineExplanation);
         }
     }
 

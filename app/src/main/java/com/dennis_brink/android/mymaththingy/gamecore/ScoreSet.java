@@ -4,9 +4,10 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import org.apache.commons.lang3.SerializationUtils;
+
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -62,6 +63,24 @@ public class ScoreSet extends DataStructure implements Serializable, IGameCore {
         return subset;
     }
 
+    public void removeGlobalRanking() {
+        for (Score x : this.scores) {
+            x.setGl_sync("");
+            x.setGl_rank(-1);
+            x.setGl_loaded(false);
+        }
+    }
+
+    public ArrayList<Score> getTop10AsArray() {
+        ArrayList<Score> subset = new ArrayList<>();
+        int idx = 0;
+        for(Score score: this.scores){
+            idx++;
+            if (idx <= 10) subset.add(SerializationUtils.clone(score)); // deep copy (not a reference)
+        }
+        return subset;
+    }
+
     public void setPlayerName(String key, String name) {
         scores.forEach(score -> {
             if(score.getId().equals(key)){
@@ -75,16 +94,19 @@ public class ScoreSet extends DataStructure implements Serializable, IGameCore {
     }
 
     public void updateScoreSetByRanking(RankSet rankSet)  {
-        rankSet.getResult().forEach((rank) -> {
-            scores.forEach(score -> {
-                if(score.getId().equals(rank.getId())){
-                    score.setGl_rank(rank.getGlRank());
-                    score.setGl_loaded(true);
-                    score.setGl_sync(GameCore.getCurrentDisplayDateTime());
-                }
-            });
-        });
+        rankSet.getResult().forEach((rank) -> scores.forEach(score -> {
+            if(score.getId().equals(rank.getId())){
+                score.setGl_rank(rank.getGlRank());
+                score.setGl_loaded(true);
+                score.setGl_sync(GameCore.getCurrentDisplayDateTime());
+            }
+        }));
     }
+
+    public void clearScoreSet() {
+        this.scores.clear();
+    }
+
 
     @NonNull
     @Override

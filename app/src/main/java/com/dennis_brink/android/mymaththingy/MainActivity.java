@@ -31,7 +31,8 @@ public class MainActivity extends AppCompatActivity implements ILogConstants {
 
         setContentView(R.layout.activity_main);
 
-        GameCore.getGlobalRanking();
+        Profile profile = GameCore.getProfile();
+        if(profile.isCompeteOnline()) GameCore.getGlobalRanking();
 
         ivMathBook = findViewById(R.id.ivMathBook);
 

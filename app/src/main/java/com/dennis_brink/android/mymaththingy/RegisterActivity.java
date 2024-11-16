@@ -18,6 +18,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
 
 import com.dennis_brink.android.mymaththingy.gamecore.GameCore;
+import com.dennis_brink.android.mymaththingy.gamecore.Player;
 import com.dennis_brink.android.mymaththingy.gamecore.Profile;
 import com.dennis_brink.android.mymaththingy.registration.FormFragment;
 import com.dennis_brink.android.mymaththingy.registration.ResultFragment;
@@ -82,15 +83,24 @@ public class RegisterActivity extends AppCompatActivity implements IRegisterActi
         Intent i = getIntent();
         i.putExtra("ONLINE_REGISTRATION", true);
 
-        Profile profile = GameCore.getProfile();
-        profile.setPlaymode(2);
-
-        Log.d("DENNIS_B", "Save profile in RegisterActivity.class - onlineRegistrationSuccess");
-        GameCore.saveDataStructure(profile);
+        setPlayModeAfterWebClient();
 
         fragmentManager.beginTransaction()
                 .replace(R.id.fragmentContainerView, ResultFragment.class, null)
                 .commit();
+    }
+
+    private void setPlayModeAfterWebClient() {
+
+        Profile profile = GameCore.getProfile();
+        Player player = GameCore.getPlayer();
+        if (player.isEmpty() && !profile.isCompeteOnline()) profile.setPlaymode(0); // anonymous
+        else {
+            if(profile.isCompeteOnline()) profile.setPlaymode(2); // we just went online
+            else profile.setPlaymode(1); // we just went offline but we are still registered
+        }
+        Log.d("DENNIS_B", "Save profile in RegisterActivity.class - onlineRegistrationSuccess");
+        GameCore.saveDataStructure(profile);
     }
 
     @Override

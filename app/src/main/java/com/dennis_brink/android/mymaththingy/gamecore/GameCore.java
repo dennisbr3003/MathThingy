@@ -44,7 +44,7 @@ public class GameCore extends Application implements IGameCore {
     }
 
     @SuppressLint("DefaultLocale")
-    static String getCurrentDisplayDateTime() {
+    public static String getCurrentDisplayDateTime() {
         Calendar localDateTime = Calendar.getInstance(Locale.getDefault());
 
         return String.format("%02d/%02d/%04d %02d:%02d",
@@ -55,12 +55,29 @@ public class GameCore extends Application implements IGameCore {
                 localDateTime.get(Calendar.MINUTE));
     }
 
+    public static String getExtension(int numberValue){
+        switch(numberValue){
+            case 1:
+                return EXT_FIRST;
+            case 2:
+                return EXT_SECOND;
+            case 3:
+                return EXT_THIRD;
+            default:
+                return EXT_REST;
+        }
+    }
+
+    // naming makes more sense in the context where this method is used
+    public static void setGlobalRanking() {
+        getGlobalRanking();
+    }
+
     public static void getGlobalRanking() {
         WebClient webClient = new WebClient(AppContext.getContext());
         webClient.initWebClient();
-
         try {
-            webClient.uploadSubSet();
+            webClient.saveScores();
         } catch (JsonProcessingException e) {
             // sendRegistrationFailure( e.getMessage());
             Log.d("DENNIS_B", "error using webclient " + e.getMessage());
