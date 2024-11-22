@@ -20,7 +20,8 @@ import com.dennis_brink.android.mymaththingy.gamecore.AppContext;
 
 public class MainMenuFragment extends Fragment implements IGameConstants, ILogConstants {
 
-    Button btnAdd, btnSub, btnMulti, btnHigh, btnExit, btnGoToRegistration;
+    Button btnAdd, btnSub, btnMulti, btnHigh, btnGoToRegistration;
+//    btnExit,
 
     public MainMenuFragment() {
         // Required empty public constructor
@@ -42,7 +43,7 @@ public class MainMenuFragment extends Fragment implements IGameConstants, ILogCo
         btnSub = v.findViewById(R.id.btnSubtract);
         btnMulti = v.findViewById(R.id.btnMultiply);
         btnHigh = v.findViewById(R.id.btnHighScores);
-        btnExit = v.findViewById(R.id.btnExit);
+        //btnExit = v.findViewById(R.id.btnExit);
         btnGoToRegistration = v.findViewById(R.id.btnGoToRegistration);
 
         btnAdd.setOnClickListener((View view) -> {
@@ -57,7 +58,7 @@ public class MainMenuFragment extends Fragment implements IGameConstants, ILogCo
 
         btnGoToRegistration.setOnClickListener(view -> startRegistration());
 
-        btnExit.setOnClickListener(view -> requireActivity().finish());
+        //btnExit.setOnClickListener(view -> requireActivity().finish());
 
         return v;
     }

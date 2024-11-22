@@ -1,9 +1,11 @@
 package com.dennis_brink.android.mymaththingy;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -14,30 +16,26 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Random;
 
 public class GameActivity extends AppCompatActivity implements IGameConstants, IGameActivityListener, ILogConstants {
 
-    TextView txtScore;
-    TextView txtLife;
-    TextView txtTime;
-    TextView txtQuestion;
-    TextView txtStreak;
-
+    TextView txtScore,txtLife,txtTime,txtQuestion,txtStreak;
     EditText etxtNumberAnswer;
 
-    Button btnOk;
-    Button btnNext;
+    Button btnOk,btnNext;
 
     Boolean lSubmitted = false;
     Boolean lLaunchSoftKeyboard = false;
@@ -48,8 +46,7 @@ public class GameActivity extends AppCompatActivity implements IGameConstants, I
     Random random = new Random();
     CountDownTimer countDownTimer;
 
-    int number1;
-    int number2;
+    int number1,number2;
 
     Game game = new Game();
 
@@ -73,103 +70,88 @@ public class GameActivity extends AppCompatActivity implements IGameConstants, I
 
         initGameValues();
 
-        etxtNumberAnswer.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        etxtNumberAnswer.setOnEditorActionListener((v, actionId, event) -> {
 
-                if(actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_NULL || event.getKeyCode() == KeyEvent.KEYCODE_ENTER){
-                    if(!lQuestionActive){
-                        Log.d(LOG_TAG, "GameActivity.class: (btnOk.onClick) No active question, nothing to submit");
-                        return true;
-                    }
-                    lSubmitted = true; // set switch
-                    lQuestionActive = false; // reset switch
-
-                    Log.d(LOG_TAG, "GameActivity.class: (etxtNumberAnswer.onEditorAction) Answer submitted by keyboard <ok> " + lSubmitted);
-
-                    try { // fails if no calculatedAnswer is given or something not numerical
-                        game.setUserAnswer(Integer.parseInt(etxtNumberAnswer.getText().toString()));
-                        processAnswer();
-                    } catch(Exception e){
-                        Log.d(LOG_TAG, "GameActivity.class: (etxtNumberAnswer.onEditorAction) Answer submitted was not numerical (int)");
-                        processIncorrectInput(2);
-                    }
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        });
-
-        btnOk.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+            if(actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_NULL || event.getKeyCode() == KeyEvent.KEYCODE_ENTER){
                 if(!lQuestionActive){
                     Log.d(LOG_TAG, "GameActivity.class: (btnOk.onClick) No active question, nothing to submit");
-                    return;
+                    return true;
                 }
                 lSubmitted = true; // set switch
                 lQuestionActive = false; // reset switch
-                Log.d(LOG_TAG, "GameActivity.class: (btnOk.onClick) Answer submitted by btnOk <Submit>" + lSubmitted);
 
-                try { // fails if no answer is given or the answer is something not numerical
+                Log.d(LOG_TAG, "GameActivity.class: (etxtNumberAnswer.onEditorAction) Answer submitted by keyboard <ok> " + lSubmitted);
+
+                try { // fails if no calculatedAnswer is given or something not numerical
                     game.setUserAnswer(Integer.parseInt(etxtNumberAnswer.getText().toString()));
                     processAnswer();
                 } catch(Exception e){
-                    Log.d(LOG_TAG, "GameActivity.class: (btnOk.onClick) Answer submitted was not numerical (int)");
+                    Log.d(LOG_TAG, "GameActivity.class: (etxtNumberAnswer.onEditorAction) Answer submitted was not numerical (int)");
                     processIncorrectInput(2);
                 }
-            }
-        });
-
-        btnNext.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.M)
-            @Override
-            public void onClick(View v) {
-
-                Log.d(LOG_TAG, "GameActivity.class: (btnNext.onClick) Answer submitted " + lSubmitted);
-                Log.d(LOG_TAG, "GameActivity.class: (btnNext.onClick) First question  " +  btnNext.getText().equals(FIRST_USE));
-
-                if((btnNext.getText().equals(FIRST_USE)) || lLaunchSoftKeyboard){
-                    Log.d(LOG_TAG, "GameActivity.class: (btnNext.onClick) First use, launch keyboard programmatically");
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
-                }
-
-                if((!lSubmitted) && (!btnNext.getText().equals(FIRST_USE))){
-                    Log.d(LOG_TAG, "GameActivity.class: (btnNext.onClick) Answer was not submitted nor is it the first question --> deduct life");
-                    processIncorrectInput(2);
-                } else{
-                    Log.d(LOG_TAG, "GameActivity.class: (btnNext.onClick) Answer was submitted or it's a first use --> do not deduct life");
-                }
-
-                lSubmitted = false; // reset switch
-                lLaunchSoftKeyboard = false; // reset switch
-                lQuestionActive = true; // set switch
-                getQuestion();
-                etxtNumberAnswer.requestFocus(); // switches the keyboard to numerical and gives focus to the correct field
-            }
-        });
-
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_options, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        int id = item.getItemId();
-        switch(id){
-            case R.id.action_quit_game:
-                AlertDialog dlg = DialogWrapper.getExitConfirmDialog(GameActivity.this);
-                dlg.show();
                 return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+            } else {
+                return false;
+            }
+        });
+
+        btnOk.setOnClickListener(v -> {
+            if(!lQuestionActive){
+                Log.d(LOG_TAG, "GameActivity.class: (btnOk.onClick) No active question, nothing to submit");
+                return;
+            }
+            lSubmitted = true; // set switch
+            lQuestionActive = false; // reset switch
+            Log.d(LOG_TAG, "GameActivity.class: (btnOk.onClick) Answer submitted by btnOk <Submit>" + lSubmitted);
+
+            try { // fails if no answer is given or the answer is something not numerical
+                game.setUserAnswer(Integer.parseInt(etxtNumberAnswer.getText().toString()));
+                processAnswer();
+            } catch(Exception e){
+                Log.d(LOG_TAG, "GameActivity.class: (btnOk.onClick) Answer submitted was not numerical (int)");
+                processIncorrectInput(2);
+            }
+        });
+
+        btnNext.setOnClickListener(v -> {
+
+            Log.d(LOG_TAG, "GameActivity.class: (btnNext.onClick) Answer submitted " + lSubmitted);
+            Log.d(LOG_TAG, "GameActivity.class: (btnNext.onClick) First question  " +  btnNext.getText().equals(FIRST_USE));
+
+            if((btnNext.getText().equals(FIRST_USE)) || lLaunchSoftKeyboard){
+                Log.d(LOG_TAG, "GameActivity.class: (btnNext.onClick) First use, launch keyboard programmatically");
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+            }
+
+            if((!lSubmitted) && (!btnNext.getText().equals(FIRST_USE))){
+                Log.d(LOG_TAG, "GameActivity.class: (btnNext.onClick) Answer was not submitted nor is it the first question --> deduct life");
+                processIncorrectInput(2);
+            } else{
+                Log.d(LOG_TAG, "GameActivity.class: (btnNext.onClick) Answer was submitted or it's a first use --> do not deduct life");
+            }
+
+            lSubmitted = false; // reset switch
+            lLaunchSoftKeyboard = false; // reset switch
+            lQuestionActive = true; // set switch
+            getQuestion();
+            etxtNumberAnswer.requestFocus(); // switches the keyboard to numerical and gives focus to the correct field
+        });
+
+        getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                // custom stuff here
+                Intent i = new Intent(GameActivity.this, MainActivity.class); // from class --> to class
+                try {
+                    startActivity(i); // run it
+                    finish(); // close this one
+                } catch (Exception e){
+                    Log.d(LOG_TAG, "GameActivity.class: (onBackPressed) --> " + e.getMessage());
+                }
+            }
+        });
+
     }
 
     public void getQuestion(){
@@ -241,11 +223,11 @@ public class GameActivity extends AppCompatActivity implements IGameConstants, I
                 game.incrementUserStreaks();
                 game.incrementUserScore(game.getUserStreaks() * STREAK_BONUS); // bonus with 10 good answers
 
-                InputMethodManager imm = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE); // hide keyboard first
+                InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE); // hide keyboard first
                 imm.hideSoftInputFromWindow(etxtNumberAnswer.getWindowToken(), 0);
 
                 AlertDialog dlg = DialogWrapper.getStreakMessageDialog(GameActivity.this, game.getUserStreaks());
-                dlg.show();
+                if(dlg!=null)dlg.show();
 
             }
 
@@ -300,7 +282,7 @@ public class GameActivity extends AppCompatActivity implements IGameConstants, I
     private void startResult(int finalScore, int finalTime, int finalStreaks){
 
         // hide keyboard
-        InputMethodManager imm = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
+        InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(etxtNumberAnswer.getWindowToken(), 0);
 
         // first parameter = from, second parameter what to start
@@ -423,11 +405,30 @@ public class GameActivity extends AppCompatActivity implements IGameConstants, I
     }
 
     private void setupLogo(){
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setLogo(R.drawable.mt_logo_padding_game);
-        getSupportActionBar().setTitle(getString(R.string._appname));
-        getSupportActionBar().setSubtitle(getString(R.string._humancalculator));
-        getSupportActionBar().setDisplayUseLogoEnabled(true);
+
+        Objects.requireNonNull(getSupportActionBar()).setDisplayShowCustomEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        LayoutInflater infl = LayoutInflater.from(this);
+        View v = infl.inflate(R.layout.actionbar, null);
+
+        TextView tvActionBarMainTitle = v.findViewById(R.id.tvActionBarMainTitle);
+        tvActionBarMainTitle.setText(R.string._appname);
+        tvActionBarMainTitle.setTextColor(getColor(R.color.white));
+        TextView tvActionBarSubTitle = v.findViewById(R.id.tvActionBarSubTitle);
+        tvActionBarSubTitle.setText(R.string._humancalculator);
+        tvActionBarSubTitle.setTextColor(getColor(R.color.white));
+        ImageView ivActionBarActionIcon = v.findViewById(R.id.ivActionBarActionIcon);
+        ivActionBarActionIcon.setImageResource(R.drawable.exit2); // override back arrow
+
+        ivActionBarActionIcon.setOnClickListener(view -> {
+            AlertDialog dlg = DialogWrapper.getExitConfirmDialog(GameActivity.this);
+            if (dlg != null) dlg.show();
+        });
+
+        // the get the custom layout to use full width
+        this.getSupportActionBar().setCustomView(v, new Toolbar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
     }
 
     @Override
@@ -436,35 +437,9 @@ public class GameActivity extends AppCompatActivity implements IGameConstants, I
         startResult(game.getUserScore(), game.getUserTime(), game.getUserStreaks());
     }
 
-    @Override
-    public void onBackPressed() {
-
-        // hide keyboard
-        InputMethodManager imm = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(etxtNumberAnswer.getWindowToken(), 0);
-
-        // first parameter = from, second parameter what to start
-        Intent i = new Intent(GameActivity.this, MainActivity.class);
-
-        Log.d(LOG_TAG, "GameActivity.class: (onBackPressed) Restarting main intent");
-
-        try {
-            startActivity(i); // run it
-            finish(); // close this one
-        } catch (Exception e){
-            Log.d(LOG_TAG, "GameActivity.class: (onBackPressed) --> " + e.getMessage());
-        }
-    }
-
     private class Game{
 
-        private int userAnswer;
-        private int calculatedAnswer;
-        private int userScore;
-        private int userTime;
-        private int userLives;
-        private int userStreaks;
-        private int correctAnswerStreak; // 10 = extra life
+        private int userAnswer,calculatedAnswer,userScore,userTime,userLives,userStreaks,correctAnswerStreak;
 
         public Game() {
             initGame();
@@ -541,6 +516,7 @@ public class GameActivity extends AppCompatActivity implements IGameConstants, I
             this.correctAnswerStreak++;
         }
 
+        @NonNull
         @Override
         public String toString() {
             return "Game{" +

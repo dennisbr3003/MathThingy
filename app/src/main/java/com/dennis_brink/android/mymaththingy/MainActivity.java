@@ -1,6 +1,7 @@
 package com.dennis_brink.android.mymaththingy;
 
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
@@ -81,7 +82,19 @@ public class MainActivity extends AppCompatActivity implements ILogConstants {
         tvActionBarSubTitle.setText(R.string._selectdifficulty);
         tvActionBarSubTitle.setTextColor(getColor(R.color.white));
         ImageView ivActionBarActionIcon = v.findViewById(R.id.ivActionBarActionIcon);
-        ivActionBarActionIcon.setVisibility(View.INVISIBLE);
+        // ivActionBarActionIcon.setVisibility(View.INVISIBLE);
+
+        ivActionBarActionIcon.setImageResource(R.drawable.exit); // override back arrow
+        // customize image
+        ivActionBarActionIcon.setPadding(5,5,5,5);
+        ivActionBarActionIcon.setBackgroundColor(getColor(R.color.white));
+        ivActionBarActionIcon.getLayoutParams().height = 80;
+        ivActionBarActionIcon.getLayoutParams().width = 160;
+
+        ivActionBarActionIcon.setOnClickListener(view -> {
+            finish();
+        });
+
         // the get the custom layout to use full width
         this.getSupportActionBar().setCustomView(v, new Toolbar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 

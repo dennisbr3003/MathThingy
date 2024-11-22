@@ -35,9 +35,9 @@
     <string name="_blackboard">blackboard</string>
     <string name="_owlglasses">owl_glasses</string>
     <string name="_nowinnershere">There are no winners here…</string>
-    <string name="_addition">addition</string>
-    <string name="_subtraction">subtraction</string>
-    <string name="_multiplication">multiplication</string>
+    <string name="_addition">additions</string>
+    <string name="_subtraction">subtractions</string>
+    <string name="_multiplication">multiplications</string>
     <string name="_highscores">Highscores</string>
     <string name="_exit">Exit?</string>
     <string name="_validname">(You must enter a valid name)</string>
@@ -89,4 +89,5 @@
     <string name="_online">Why not start playing online !?</string>
     <string name="_onLineExplanation">Just check <b>\"Compete online\"</b> right above me and hit <b>\"Save\"</b> below. Your already achieved <b>HIGH SCORES</b> will be submitted to the internet and you start competing and flexing your calculation skills 🤓 immediately.\nHad enough? Just uncheck <b>\"Compete online\"</b> and hit <b>\"Save\"</b>. Your online presence will be deleted completely, your local data will <b>not</b>.🙂</string>
     <string name="_clearhighscore"><![CDATA[Are you sure you want to <big>☠️</big> the high score list?]]></string>
+    <string name="_gametype">What will it be today?</string>
 </resources>
