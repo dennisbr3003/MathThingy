@@ -6,6 +6,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.res.ResourcesCompat;
+import androidx.core.text.HtmlCompat;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -14,6 +15,8 @@ import android.content.IntentFilter;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Html;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,7 +37,6 @@ import com.google.android.material.snackbar.Snackbar;
 
 import java.util.Objects;
 
-//IHighScoreDialogListener,
 public class ResultActivity extends AppCompatActivity implements IGameConstants, ILogConstants, IRegistrationConstants, IRegisterActivityListener {
 
     Button btnAgain, btnExit;
@@ -101,7 +103,7 @@ public class ResultActivity extends AppCompatActivity implements IGameConstants,
         try {
             return createInputDialog(rank + GameCore.getExtension(rank), key, callSign, context);
         } catch (Exception e){
-            Log.d(LOG_TAG, "DialogWrapper.class: (getHighScoreInputDialog) --> " + e.getMessage());
+            Log.d(LOG_TAG, "ResultActivity.class: (getHighScoreInputDialog) --> " + e.getMessage());
         }
         return null;
     }
@@ -123,8 +125,10 @@ public class ResultActivity extends AppCompatActivity implements IGameConstants,
 
         // hide error, do not use "gone" because of constraints
         txtHighScoreError.setVisibility(View.INVISIBLE);
-        String text = String.format(context.getString(R.string._enterhighscore), full_rank);
-        txtHighScoreMessage.setText(text);
+        String text = context.getString(R.string._enterhighscore);
+        String dynamicText = String.format(text, full_rank);
+        Spanned dynamicStyledText = HtmlCompat.fromHtml(dynamicText, HtmlCompat.FROM_HTML_MODE_COMPACT);
+        txtHighScoreMessage.setText(dynamicStyledText);
 
         etxtHighScoreName.setText(callSign);
 
@@ -138,10 +142,15 @@ public class ResultActivity extends AppCompatActivity implements IGameConstants,
                 scoreSet.setPlayerName(key, callSign);
                 GameCore.saveDataStructure(scoreSet);
                 // send this to the internet if the profile is competing online
-                GameCore.setGlobalRanking();
+                if(profile.isCompeteOnline()) GameCore.setGlobalRanking();
+
                 // hide the keyboard
                 InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(etxtHighScoreName.getWindowToken(), 0);
+
+                // show snack bar here if we are not competing online
+                if(!profile.isCompeteOnline()) showSnackBar();
+
                 // close dialog
                 dlg.dismiss();
                 // show snack bar with quick access to highscore list
@@ -156,6 +165,10 @@ public class ResultActivity extends AppCompatActivity implements IGameConstants,
 
     }
 
+    public static Spanned fromHtml(String source) {
+        Log.d(LOG_TAG, "fromHtml " + source);
+        return Html.fromHtml(source, Html.FROM_HTML_MODE_LEGACY);
+    }
     private void setupLogo(){
 
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowCustomEnabled(true);
@@ -212,33 +225,12 @@ public class ResultActivity extends AppCompatActivity implements IGameConstants,
 
     private IntentFilter getFilter(){
         IntentFilter intentFilter = new IntentFilter();
-        //intentFilter.addAction(HIGHSCORE_ACTION); // only register receiver for this event
         intentFilter.addAction(ONLINE_REGISTRATION_SUCCESS); // only register this activity for these events for the receiver tio handle
         intentFilter.addAction(ONLINE_REGISTRATION_FAILURE);
         intentFilter.addAction(LOCAL_REGISTRATION_SUCCESS);
         intentFilter.addAction(LOCAL_REGISTRATION_FAILURE);
         return intentFilter;
     }
-// todo omzetten naar nieuwe datatsructuur
-//    @SuppressLint("RestrictedApi")
-//    @Override
-//    public void processHighScoreName(String name, String key) {
-//
-//        Log.d(LOG_TAG, String.format("ResultActivity.class: (processHighScoreName) update high score entry with name %s and key %s", name, key));
-//
-//        scoreSet = GameCore.getScoreSet();
-//        scoreSet.setPlayerName(key, name);
-//        GameCore.saveDataStructure(scoreSet);
-//
-//        GameCore.getGlobalRanking();
-//
-//        try {
-//            showSnackBar();
-//        } catch(Exception e){
-//            Log.d(LOG_TAG, "ResultActivity.class: (processHighScoreName) --> " + e.getMessage());
-//        }
-//
-//    }
 
     @SuppressLint("RestrictedApi")
     private void showSnackBar(){

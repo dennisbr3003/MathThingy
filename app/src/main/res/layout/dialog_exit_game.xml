@@ -7,7 +7,7 @@
     android:background="@color/holo_blue_light">
 
     <ImageView
-        android:id="@+id/imageView3"
+        android:id="@+id/ivOwlNote"
         android:layout_width="86dp"
         android:layout_height="89dp"
         android:layout_marginStart="13dp"
@@ -55,7 +55,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/imageView5"
+        android:id="@+id/ivTextBalloon"
         android:layout_width="227dp"
         android:layout_height="97dp"
         android:layout_marginStart="70dp"

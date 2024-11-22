@@ -79,7 +79,6 @@ public class GameCore extends Application implements IGameCore {
         try {
             webClient.saveScores();
         } catch (JsonProcessingException e) {
-            // sendRegistrationFailure( e.getMessage());
             Log.d("DENNIS_B", "error using webclient " + e.getMessage());
         }
     }

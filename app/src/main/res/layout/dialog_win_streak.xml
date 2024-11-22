@@ -7,7 +7,7 @@
     android:background="@color/holo_blue_light">
 
     <ImageView
-        android:id="@+id/imageView3"
+        android:id="@+id/ivOwlNote"
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_marginStart="13dp"
@@ -20,7 +20,7 @@
         android:layout_width="103dp"
         android:layout_height="68dp"
         android:layout_marginTop="4dp"
-        app:layout_constraintStart_toEndOf="@+id/imageView3"
+        app:layout_constraintStart_toEndOf="@+id/ivOwlNote"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/well_done2" />
 
@@ -47,16 +47,16 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/imgOk"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imageView3"
-        app:layout_constraintTop_toBottomOf="@+id/imageView5" />
+        app:layout_constraintStart_toEndOf="@+id/ivOwlNote"
+        app:layout_constraintTop_toBottomOf="@+id/ivTextBalloon" />
 
     <ImageView
-        android:id="@+id/imageView5"
+        android:id="@+id/ivTextBalloon"
         android:layout_width="122dp"
         android:layout_height="83dp"
         android:layout_marginStart="-15dp"
         android:layout_marginTop="4dp"
-        app:layout_constraintStart_toEndOf="@+id/imageView3"
+        app:layout_constraintStart_toEndOf="@+id/ivOwlNote"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/speech_bubble" />
 </androidx.constraintlayout.widget.ConstraintLayout>

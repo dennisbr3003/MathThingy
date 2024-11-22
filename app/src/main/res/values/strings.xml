@@ -20,7 +20,7 @@
     <string name="_correctanswer">Congratulations, your answer %s is correct</string>
     <string name="_yourscore">You scored an amazing %s points!</string>
     <string name="_streakwin">Extra congratulations to you! This is your %s %s answers win streak. You get an extra life and you receive %s * %s = %s bonus points!</string>
-    <string name="_enterhighscore">You ranked %s on the high score list. Enter your name and claim your place!</string>
+    <string name="_enterhighscore"><![CDATA[You ranked<big><b><font color="#000000">&nbsp;&nbsp;%1s&nbsp;&nbsp;</font></b></big>on the high score list. Enter your name and claim your place!]]></string>
     <string name="_0">0</string>
     <string name="_streakcaps">Streak</string>
     <string name="_life">Life</string>
@@ -88,4 +88,5 @@
     <string name="_explanation">No worries, just uncheck <b>\"Compete online\"</b> right above me and hit <b>\"Save\"</b> below. All your online data, if any, will be deleted.\nYour local data will be save and untouched and that, of course, includes your precious <b>HIGH SCORES</b>.\nYou can go back online and compete at any time. Just check <b>\"Compete online\"</b> and hit <b>\"Save\"</b>. Soon enough you will be calculating the competition to another galaxy!.👌</string>
     <string name="_online">Why not start playing online !?</string>
     <string name="_onLineExplanation">Just check <b>\"Compete online\"</b> right above me and hit <b>\"Save\"</b> below. Your already achieved <b>HIGH SCORES</b> will be submitted to the internet and you start competing and flexing your calculation skills 🤓 immediately.\nHad enough? Just uncheck <b>\"Compete online\"</b> and hit <b>\"Save\"</b>. Your online presence will be deleted completely, your local data will <b>not</b>.🙂</string>
+    <string name="_clearhighscore"><![CDATA[Are you sure you want to <big>☠️</big> the high score list?]]></string>
 </resources>

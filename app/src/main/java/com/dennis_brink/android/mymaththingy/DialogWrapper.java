@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -16,18 +17,9 @@ import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.text.HtmlCompat;
 
 public class DialogWrapper implements IGameConstants, ILogConstants {
-
-    public static AlertDialog getHighScoreInputDialog(Context context, int rank, String key){
-
-        try {
-            return createInputDialog(rank + getExtension(rank), key, context);
-        } catch (Exception e){
-            Log.d(LOG_TAG, "DialogWrapper.class: (getHighScoreInputDialog) --> " + e.getMessage());
-        }
-        return null;
-    }
 
     public static AlertDialog getStreakMessageDialog(Context context, int streaks){
 
@@ -42,10 +34,8 @@ public class DialogWrapper implements IGameConstants, ILogConstants {
     }
 
     public static AlertDialog getDeleteConfirmDialog(Context context){
-
-        String text = String.format("Are you sure you want to       the high score list?"); // mind the gap, it's there for a reason
         try {
-            return createConfirmationDialog(context, LAYOUT_CONFIRM_DELETE, text);
+            return createConfirmationDialog(context, LAYOUT_CONFIRM_DELETE, "delete");
         } catch (Exception e){
             Log.d(LOG_TAG, "DialogWrapper.class: (getDeleteConfirmDialog) --> " + e.getMessage());
         }
@@ -61,79 +51,6 @@ public class DialogWrapper implements IGameConstants, ILogConstants {
             Log.d(LOG_TAG, "DialogWrapper.class: (getExitConfirmDialog) --> " + e.getMessage());
         }
         return null;
-    }
-
-
-    private static AlertDialog createInputDialog(String full_rank, String key, Context context)  {
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-
-        builder.setCancelable(false);
-        LayoutInflater inf = LayoutInflater.from(context);
-        View dialogMessage = inf.inflate(R.layout.dialog_highscore_input, null);
-
-        builder.setView(dialogMessage);
-
-        TextView txtHighScoreMessage = dialogMessage.findViewById(R.id.txtHighScoreMessage);
-        ImageView imgSaveName = dialogMessage.findViewById(R.id.imgHighScoreOk);
-        TextView txtHighScoreError = dialogMessage.findViewById(R.id.txtHighScoreErrorMessage);
-        EditText etxtHighScoreName = dialogMessage.findViewById(R.id.etxtHighScoreName);
-
-        // hide error, do not use "gone" because of constraints
-        txtHighScoreError.setVisibility(View.INVISIBLE);
-        String text = String.format(context.getString(R.string._enterhighscore), full_rank);
-        txtHighScoreMessage.setText(text);
-
-        AlertDialog dlg = builder.create();
-
-        imgSaveName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Log.d(LOG_TAG, "DialogWrapper.class: (imgSaveName.onClick) High Score name empty? " + etxtHighScoreName.getText().toString().isEmpty());
-                Log.d(LOG_TAG, "DialogWrapper.class: (imgSaveName.onClick) High Score name " + etxtHighScoreName.getText().toString());
-
-                if(etxtHighScoreName.getText().toString().isEmpty()){
-                    txtHighScoreError.setVisibility(View.VISIBLE);
-                } else {
-                    // broadcast the name
-                    broadcastHighScoreName(etxtHighScoreName.getText().toString(), key, HIGHSCORE_ACTION);
-                    // hide keyboard
-                    try {
-                        Log.d(LOG_TAG, "DialogWrapper.class: (imgSaveName.onClick) Hiding soft keyboard");
-                        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-                        imm.hideSoftInputFromWindow(etxtHighScoreName.getWindowToken(), 0);
-                    }catch(Exception e){
-                        Log.d(LOG_TAG, "DialogWrapper.class: (imgSaveName.onClick) --> " + e.getMessage());
-                    }
-                    dlg.dismiss();
-                }
-
-            }
-
-            private void broadcastHighScoreName(String highScoreName, String key, String action) {
-                Log.d(LOG_TAG, String.format("DialogWrapper.class: (broadcastHighScoreName) Start %s sending %s with key %s", action, highScoreName, key));
-                Intent i = new Intent();
-                i.setAction(action);
-                i.putExtra(HIGHSCORE_ACTION, highScoreName);
-                i.putExtra(HIGHSCORE_KEY, key);
-                context.sendBroadcast(i);
-            }
-
-        });
-
-        // setup simple click listener for the filename field,so when the name text field
-        // is clicked the error objects are reset for a new attempt -->
-        etxtHighScoreName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                txtHighScoreError.setVisibility(View.INVISIBLE);
-            }
-        });
-
-        Log.d(LOG_TAG, "DialogWrapper.class: (createInputDialog) Return dialog");
-        return dlg;
-
     }
 
     private static AlertDialog createMessageDialog(String text, Context context){
@@ -182,8 +99,6 @@ public class DialogWrapper implements IGameConstants, ILogConstants {
         switch(dlg_type){
             case LAYOUT_CONFIRM_DELETE:
                 dialogMessage = inf.inflate(R.layout.dialog_delete_highscore, null);
-                ImageView imgTrashCan = dialogMessage.findViewById(R.id.imgTrashCan);
-                imgTrashCan.setVisibility(View.VISIBLE);
                 break;
             case LAYOUT_CONFIRM_EXIT:
                 dialogMessage = inf.inflate(R.layout.dialog_exit_game, null);
@@ -195,7 +110,14 @@ public class DialogWrapper implements IGameConstants, ILogConstants {
         TextView textView = dialogMessage.findViewById(R.id.txtMessage);
         ImageView imgOk = dialogMessage.findViewById(R.id.imgOk);
         ImageView imgNotOk = dialogMessage.findViewById(R.id.imgNotOk);
-        textView.setText(text);
+
+        if (dlg_type.equals(LAYOUT_CONFIRM_DELETE)){
+            String text2 = context.getString(R.string._clearhighscore);
+            Spanned dynamicStyledText = HtmlCompat.fromHtml(text2, HtmlCompat.FROM_HTML_MODE_COMPACT);
+            textView.setText(dynamicStyledText);
+        } else {
+            textView.setText(text);
+        }
 
         AlertDialog dlg = builder.create();
 

@@ -5,19 +5,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import java.util.Objects;
+
 public class Receiver extends BroadcastReceiver implements IGameConstants, ILogConstants, IRegistrationConstants {
 
-    private IHighScoreDialogListener highScoreDialogListener;
     private IHighScoreDeleteListener highScoreDeleteListener;
     private IGameActivityListener gameActivityListener;
     private IRegisterActivityListener registerActivityListener;
 
     public void setRegisterActivityListener(IRegisterActivityListener registerActivityListener){
         this.registerActivityListener = registerActivityListener;
-    }
-
-    public void setHighScoreDialogListener(IHighScoreDialogListener highScoreDialogListener){
-        this.highScoreDialogListener = highScoreDialogListener;
     }
 
     public void setGameActivityListener(IGameActivityListener gameActivityListener){
@@ -33,53 +30,43 @@ public class Receiver extends BroadcastReceiver implements IGameConstants, ILogC
 
         Log.d(LOG_TAG, "Receiver.class: (onReceive) Receiver reached with action " + intent.getAction());
 
-//        if(intent.getAction().equals(HIGHSCORE_ACTION)) {
-//
-//            Log.d(LOG_TAG, "Receiver.class: (onReceive) High score name received " + intent.getStringExtra(HIGHSCORE_ACTION));
-//            Log.d(LOG_TAG, "Receiver.class: (onReceive) High score key received " + intent.getStringExtra(HIGHSCORE_KEY));
-//
-//            if (highScoreDialogListener != null) {
-//                highScoreDialogListener.processHighScoreName(intent.getStringExtra(HIGHSCORE_ACTION), intent.getStringExtra(HIGHSCORE_KEY));
-//            }
-//        }
-
-        if(intent.getAction().equals(HIGHSCORE_DELETE_ACTION)) {
+        if(Objects.equals(intent.getAction(), HIGHSCORE_DELETE_ACTION)) {
             if (highScoreDeleteListener != null) {
                 highScoreDeleteListener.deleteHighScoreList();
             }
         }
 
-        if(intent.getAction().equals(SOFTKEYBOARD_ACTION)) {
+        if(Objects.equals(intent.getAction(), SOFTKEYBOARD_ACTION)) {
             if (gameActivityListener != null) {
                 gameActivityListener.launchSoftKeyBoard();
             }
         }
 
-        if(intent.getAction().equals(EXIT_GAME_ACTION)) {
+        if(Objects.equals(intent.getAction(), EXIT_GAME_ACTION)) {
             if (gameActivityListener != null) {
                 gameActivityListener.exitGame();
             }
         }
 
-        if(intent.getAction().equals(ONLINE_REGISTRATION_FAILURE)) {
+        if(Objects.equals(intent.getAction(), ONLINE_REGISTRATION_FAILURE)) {
             if (registerActivityListener != null) {
                 registerActivityListener.onlineRegistrationFailure(intent.getStringExtra("MSG"));
             }
         }
 
-        if(intent.getAction().equals(ONLINE_REGISTRATION_SUCCESS)) {
+        if(Objects.equals(intent.getAction(), ONLINE_REGISTRATION_SUCCESS)) {
             if (registerActivityListener != null) {
                 registerActivityListener.onlineRegistrationSuccess();
             }
         }
 
-        if(intent.getAction().equals(LOCAL_REGISTRATION_FAILURE)) {
+        if(Objects.equals(intent.getAction(), LOCAL_REGISTRATION_FAILURE)) {
             if (registerActivityListener != null) {
                 registerActivityListener.localRegistrationFailure(intent.getStringExtra("MSG"));
             }
         }
 
-        if(intent.getAction().equals(LOCAL_REGISTRATION_SUCCESS)) {
+        if(Objects.equals(intent.getAction(), LOCAL_REGISTRATION_SUCCESS)) {
             if (registerActivityListener != null) {
                 registerActivityListener.localRegistrationSuccess();
             }
